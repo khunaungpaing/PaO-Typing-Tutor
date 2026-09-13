@@ -1,0 +1,48 @@
+# Python bytecode and runtime caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments and Python tooling
+.venv/
+venv/
+env/
+.env
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Packaging and build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+pip-wheel-metadata/
+
+# Editors and operating systems
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Temporary files and logs
+*.tmp
+*.log
+
+# Local end-user content created by the app
+assets/custom_lessons.json
+assets/keyboards/*.json
+!assets/keyboards/README.md
+assets/sounds/*.wav
+assets/sounds/*.mp3
+assets/sounds/*.ogg
+assets/sounds/*.m4a
+assets/sounds/*.flac
