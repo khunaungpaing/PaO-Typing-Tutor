@@ -1,0 +1,5 @@
+{
+  "correct": "correct.wav",
+  "incorrect": "incorrect.wav",
+  "complete": "complete.wav"
+}

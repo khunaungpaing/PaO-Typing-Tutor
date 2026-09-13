@@ -1,0 +1,13 @@
+{
+  "code": "en",
+  "name": "English",
+  "app": {"title": "Pa-O Typing Tutor"},
+  "controls": {"previous": "Previous lesson", "next": "Next lesson", "restart": "Restart lesson", "sound": "Sound", "sound_on": "Turn sound on", "sound_off": "Turn sound off", "mute": "Mute", "language": "Language", "interface_language": "Interface", "lesson_subject": "Lesson subject", "keyboard": "Keyboard layout", "add_lesson": "Create lesson", "manage_lessons": "Manage custom lessons", "keyboard_layouts": "Keyboard layouts"},
+  "common": {"cancel": "Cancel", "invalid": "Check the form", "import": "Import JSON/CSV", "resources": "Lesson sample", "download_sample": "Download sample", "save_as": "Save download", "download_failed": "Could not save file", "downloaded": "File saved"},
+  "lesson_editor": {"title": "Create lesson", "heading": "New Pa-O lesson", "description": "Add your own practice content. It will appear in the lesson list immediately and after restarting.", "name": "Title", "text": "Practice text", "title_placeholder": "Lesson title", "text_placeholder": "Enter Pa-O practice text…", "required": "Enter both a lesson title and practice text.", "import": "Import lessons"},
+  "lesson_manager": {"title": "Manage lessons", "heading": "Custom lessons", "description": "Edit or delete lessons you created. Built-in lessons are protected and are not shown here.", "save": "Save changes", "delete": "Delete lesson", "close": "Close", "confirm": "Delete “{title}”? This cannot be undone."},
+  "keyboard_editor": {"title": "Keyboard layouts", "heading": "Pa-O keyboard layout", "description": "Use an existing layout, or edit the normal and Shift outputs and save them as a new layout.", "existing": "Starting layout", "name_placeholder": "New layout name", "physical": "Physical key", "normal": "Normal", "shift": "Shift", "use": "Use selected", "save": "Save new and use", "name_required": "Enter a name for the new keyboard layout."},
+  "typing": {"placeholder": "Type here…", "ready": "Ready to start typing", "complete": "Lesson complete", "next": "Next: {character}", "next_key": "Next: {character}  ·  Key: {key}"},
+  "metrics": {"time": "TIME", "wpm": "WPM", "cpm": "CPM", "accuracy": "ACCURACY", "speed": "SPEED"},
+  "result": {"window": "Lesson complete", "badge": "LESSON COMPLETE", "heading": "Lesson complete!", "subtitle": "Great work — every keystroke builds speed and confidence.", "review": "ATTEMPT REVIEW  ·  {count} ERRORS", "error": "Position {position}: expected {expected}, typed {actual}", "perfect": "Perfect run — no typing errors.", "again": "Practice again", "next": "Next lesson", "course_complete": "Course complete"}
+}
