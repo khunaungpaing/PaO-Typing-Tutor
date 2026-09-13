@@ -34,7 +34,7 @@ from gui.typing_area import TypingArea
 from gui.virtual_keyboard import VirtualKeyboard
 
 
-NATIVE_WINDOW_TITLE = "Pa-O Typing Tutor"
+NATIVE_WINDOW_TITLE = "Pa-O Typing Tutor (Experimental)"
 
 
 class MainWindow(QMainWindow):
