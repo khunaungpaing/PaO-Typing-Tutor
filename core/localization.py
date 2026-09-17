@@ -7,6 +7,9 @@ from pathlib import Path
 from typing import Any
 
 
+ASCII_TO_PAO_DIGITS = str.maketrans("0123456789", "𑛐𑛑𑛒𑛓𑛔𑛕𑛖𑛗𑛘𑛙")
+
+
 class Localizer:
     """Discover locales and translate dotted keys from editable JSON files."""
 
@@ -42,9 +45,22 @@ class Localizer:
             value = self._lookup(self.catalogs.get(self.default, {}), message_key)
         result = str(value if value is not None else message_key)
         try:
-            return result.format(**values)
+            result = result.format(**values)
         except (KeyError, ValueError):
-            return result
+            pass
+        return self.localize_digits(result)
+
+    def localize_digits(self, value: str) -> str:
+        """Render ASCII digits in the active locale's numeral system.
+
+        Pa-O uses the Myanmar Pa-O digits in the U+116D0 block. Keeping this
+        formatting at the localization boundary leaves lesson text and typing
+        input untouched while making dynamic UI values consistent.
+        """
+        catalog = self.catalogs.get(self.current, {})
+        if catalog.get("numbering_system") == "pao":
+            return value.translate(ASCII_TO_PAO_DIGITS)
+        return value
 
     @staticmethod
     def _lookup(catalog: dict[str, Any], key: str) -> object | None:

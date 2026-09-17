@@ -1,6 +1,7 @@
 {
   "code": "pao",
   "name": "ပအို𑛦",
+  "numbering_system": "pao",
   "app": {"title": "ပအို𑛦 လိက်တဲမ်းသှောန်ကျင်ႋခန်ႋ"},
   "controls": {"previous": "ဆုတ်ချာ", "next": "လွေႋငါ", "restart": "စချာ", "sound": "အငါ်း", "sound_on": "ဗှောင်အငါ်း", "sound_off": "အှောန်ပေ့ႋအငါ်း", "mute": "အှောန်ပေ့ႋအငါ်း", "language": "ဘာ𑛦သာ𑛦ငါ်းငွါ", "interface_language": "ဘာ𑛦သာ𑛦ငါ်းငွါ", "lesson_subject": "အခန်ႋဘာ𑛦သာ𑛦", "keyboard": "မောင်ႋကွက်", "add_lesson": "အှောန်𑛦သော့ႋအခန်ႋ", "manage_lessons": "စီ𑛦မံ𑛦အခန်ႋဖိုင်𑛦", "keyboard_layouts": "မောင်ႋကွက်ဖိုင်𑛦"},
   "common": {"cancel": "မာႋဒုမ်", "invalid": "စဲတ်ဆေႋယင်းသှော့", "import": "သွင်ႋ JSON/CSV", "resources": "အခန်ႋနမူ𑛦နာ𑛦", "download_sample": "ထူ𑛦နမူ𑛦နာ𑛦", "save_as": "သေမ်ႋဟာ်", "download_failed": "သေမ်ႋဟာ်တလႋတာ်း", "downloaded": "သေမ်ႋဟာ်ထှူ𑛦လဲင်း"},

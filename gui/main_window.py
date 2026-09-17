@@ -147,7 +147,7 @@ class MainWindow(QMainWindow):
         lesson_layout.addWidget(self.next_button)
         layout.addWidget(lesson_bar)
 
-        self.metrics = MetricsBar()
+        self.metrics = MetricsBar(self.localizer.localize_digits)
         layout.addWidget(self.metrics)
         self.typing_area = TypingArea()
         self.target_label = self.typing_area.target_label
@@ -453,6 +453,7 @@ class MainWindow(QMainWindow):
         self.localizer.set_language(code)
         self.settings.setValue("language", code)
         self._translate_ui()
+        self._refresh_metrics()
         self._update_key_hint()
 
     def _toggle_sound(self, muted: bool) -> None:
@@ -596,9 +597,12 @@ class MainWindow(QMainWindow):
         metrics_grid = QGridLayout()
         metrics_grid.setHorizontalSpacing(10)
         metric_values = (
-            (self.localizer.text("metrics.speed"), f"{wpm:.1f} WPM"),
-            (self.localizer.text("metrics.accuracy"), f"{accuracy:.1f}%"),
-            (self.localizer.text("metrics.time"), f"{int(elapsed) // 60:02d}:{int(elapsed) % 60:02d}"),
+            (self.localizer.text("metrics.speed"),
+             self.localizer.localize_digits(f"{wpm:.1f} WPM")),
+            (self.localizer.text("metrics.accuracy"),
+             self.localizer.localize_digits(f"{accuracy:.1f}%")),
+            (self.localizer.text("metrics.time"), self.localizer.localize_digits(
+                f"{int(elapsed) // 60:02d}:{int(elapsed) % 60:02d}")),
         )
         for column, (label_text, value_text) in enumerate(metric_values):
             card = QFrame()
