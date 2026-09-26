@@ -51,7 +51,13 @@ class TypingEngine:
 
     @property
     def complete(self) -> bool:
-        return len(self.typed) >= len(self.target) and self.typed == self.target
+        """Finish once the learner reaches the end, even with mistakes.
+
+        Requiring an exact match leaves a learner stuck when an invisible
+        character such as a space is wrong. The UI presents the mistakes in
+        the completion review instead, where they can restart and retry.
+        """
+        return len(self.typed) >= len(self.target)
 
     @property
     def next_character(self) -> Optional[str]:

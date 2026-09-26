@@ -27,6 +27,7 @@ from core.metrics import MetricsCalculator
 from core.sound_manager import SoundManager
 from core.typing_engine import CharacterResult, TypingEngine
 from gui.metrics_bar import MetricsBar
+from gui.about_dialog import AboutDialog
 from gui.content_dialogs import KeyboardLayoutDialog, LessonEditorDialog
 from gui.content_dialogs import ManageLessonsDialog
 from gui.icons import icon
@@ -127,6 +128,10 @@ class MainWindow(QMainWindow):
         self.keyboard_layout_button.setObjectName("iconButton")
         self.keyboard_layout_button.setFixedSize(42, 42)
         self.keyboard_layout_button.clicked.connect(self._open_keyboard_layouts)
+        self.about_button = QPushButton()
+        self.about_button.setObjectName("iconButton")
+        self.about_button.setFixedSize(42, 42)
+        self.about_button.clicked.connect(self._open_about_dialog)
         header.addWidget(self.title_label, 1)
         header.addStretch()
         header.addWidget(self.interface_icon)
@@ -135,6 +140,7 @@ class MainWindow(QMainWindow):
         header.addWidget(self.add_lesson_button)
         header.addWidget(self.manage_lessons_button)
         header.addWidget(self.keyboard_layout_button)
+        header.addWidget(self.about_button)
         layout.addWidget(top_bar)
 
         lesson_bar = QFrame()
@@ -472,6 +478,11 @@ class MainWindow(QMainWindow):
         self.add_lesson_button.setIcon(icon(self, "plus"))
         self.manage_lessons_button.setIcon(icon(self, "list"))
         self.keyboard_layout_button.setIcon(icon(self, "keyboard"))
+        self.about_button.setIcon(icon(self, "info"))
+
+    def _open_about_dialog(self) -> None:
+        dialog = AboutDialog(self, self.assets_directory)
+        dialog.exec()
 
     def _translate_ui(self) -> None:
         t = self.localizer.text
@@ -492,6 +503,7 @@ class MainWindow(QMainWindow):
         self.add_lesson_button.setToolTip(t("controls.add_lesson"))
         self.manage_lessons_button.setToolTip(t("controls.manage_lessons"))
         self.keyboard_layout_button.setToolTip(t("controls.keyboard_layouts"))
+        self.about_button.setToolTip(t("controls.about"))
         self.language_picker.setToolTip(t("controls.language"))
         self.input_edit.setPlaceholderText(t("typing.placeholder"))
         self.metrics.set_titles({key: t(f"metrics.{key}") for key in self.metrics.headings})
@@ -518,7 +530,9 @@ class MainWindow(QMainWindow):
     def _render_target(self) -> None:
         parts: List[str] = []
         for index, character in enumerate(self.engine.target):
-            escaped = html.escape(character)
+            # Spaces must remain visible in the reference text. Otherwise an
+            # incorrect or missing space is impossible to locate visually.
+            escaped = html.escape("␣" if character == " " else character)
             if index < len(self.engine.typed):
                 color = "#4ade80" if self.engine.typed[index] == character else "#f87171"
                 parts.append(f'<span style="color:{color};">{escaped}</span>')
@@ -546,6 +560,9 @@ class MainWindow(QMainWindow):
         key_character = self.keyboard.highlight_target(remaining)
         if character is None:
             self.hint_label.setText(self.localizer.text("typing.complete"))
+        elif character == " ":
+            self.hint_label.setText(self.localizer.text(
+                "typing.next", character=self.localizer.text("typing.space")))
         elif key_character:
             self.hint_label.setText(self.localizer.text(
                 "typing.next_key", character=character, key=key_character))
@@ -564,7 +581,8 @@ class MainWindow(QMainWindow):
         wpm = MetricsCalculator.wpm(correct, elapsed)
         error_lines = [
             self.localizer.text("result.error", position=error.index + 1,
-                                expected=repr(error.expected), actual=repr(error.actual))
+                                expected=self._describe_character(error.expected),
+                                actual=self._describe_character(error.actual))
             for error in self.error_history
         ]
         dialog = QDialog(self)
@@ -669,6 +687,10 @@ class MainWindow(QMainWindow):
             self._restart()
         elif result == 3:
             self._next_lesson()
+
+    def _describe_character(self, character: str) -> str:
+        """Use a readable name for whitespace in error feedback."""
+        return self.localizer.text("typing.space") if character == " " else repr(character)
 
     def closeEvent(self, event: object) -> None:
         """Stop background timer before closing."""

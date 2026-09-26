@@ -20,6 +20,7 @@ _NATIVE = {
     "plus": QStyle.StandardPixmap.SP_FileDialogNewFolder,
     "keyboard": QStyle.StandardPixmap.SP_ComputerIcon,
     "list": QStyle.StandardPixmap.SP_FileDialogListView,
+    "info": QStyle.StandardPixmap.SP_MessageBoxInformation,
 }
 
 _AWESOME = {
@@ -33,6 +34,7 @@ _AWESOME = {
     "keyboard": "fa6s.keyboard",
     "plus": "fa6s.plus",
     "list": "fa6s.list-ul",
+    "info": "fa6s.circle-info",
 }
 
 

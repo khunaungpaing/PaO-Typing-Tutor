@@ -1,0 +1,143 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-macos:
+    name: Build macOS DMG
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller pillow
+
+      - name: Build macOS DMG
+        run: |
+          chmod +x scripts/build_macos.sh
+          ./scripts/build_macos.sh
+
+      - name: Upload macOS DMG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-dmg
+          path: dist/*.dmg
+          if-no-files-found: error
+
+  build-windows:
+    name: Build Windows Installer
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller pillow
+
+      - name: Install Inno Setup
+        run: |
+          choco install innosetup --no-progress
+
+      - name: Build Windows Installer
+        run: |
+          powershell -ExecutionPolicy Bypass -File scripts/build_windows.ps1
+
+      - name: Upload Windows Installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: dist/*-windows-setup.exe
+          if-no-files-found: error
+
+  create-release:
+    name: Create GitHub Release
+    needs: [build-macos, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Generate Checksums
+        run: |
+          cd artifacts
+          sha256sum * > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/*.dmg
+            artifacts/*-windows-setup.exe
+            artifacts/SHA256SUMS.txt
+          name: Pa-O Typing Tutor ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          body: |
+            ## Pa-O Typing Tutor ${{ github.ref_name }}
+
+            A cross-platform desktop typing tutor for the Pa-O language (Kham Dom Experimental keyboard).
+
+            ---
+
+            ### 📦 Downloads
+
+            | Platform | File | Description |
+            | :--- | :--- | :--- |
+            | **macOS** | `Pa-O-Typing-Tutor-${{ github.ref_name }}-macos.dmg` | Drag-and-drop installer for macOS 11+ |
+            | **Windows** | `Pa-O-Typing-Tutor-${{ github.ref_name }}-windows-setup.exe` | Clean setup wizard for Windows 10/11 |
+
+            ---
+
+            ### 🛡️ First-Launch Security Warnings & Workarounds
+
+            Because this open-source application is not yet code-signed with paid certificates ($99/yr Apple Developer, commercial Windows EV certificate), your operating system will show a standard one-time security warning on first launch.
+
+            #### macOS ("App is damaged" or "Unidentified Developer")
+            macOS Gatekeeper blocks unsigned apps downloaded from the internet. To open:
+            1. Open **Terminal** (from Applications > Utilities).
+            2. Run the following command:
+               ```bash
+               xattr -cr "/Applications/Pa-O Typing Tutor.app"
+               ```
+            3. Launch **Pa-O Typing Tutor** normally from Applications or Spotlight.
+
+            *Alternatively: Right-click (or Control-click) the app icon in Finder, choose **Open**, and click **Open** in the dialog.*
+
+            #### Windows ("Windows protected your PC" / SmartScreen)
+            Windows Defender SmartScreen flags freshly released executables without built-up reputation.
+            1. When the blue "Windows protected your PC" banner appears, click **More info**.
+            2. Click **Run anyway**.
+            3. The installer will proceed normally and install Pa-O Typing Tutor into your Programs folder.
+
+            ---
+
+            ### 🔐 File Integrity Checksums (SHA-256)
+            See attached `SHA256SUMS.txt` to verify file integrity.
