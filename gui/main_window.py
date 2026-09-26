@@ -7,7 +7,7 @@ import time
 from pathlib import Path
 from typing import Dict, List
 
-from PyQt6.QtCore import QEvent, QObject, QSettings, Qt, QTimer
+from PyQt6.QtCore import QEvent, QObject, QSettings, QStandardPaths, Qt, QTimer
 from PyQt6.QtGui import QFont, QKeyEvent
 from PyQt6.QtWidgets import (
     QComboBox, QDialog, QFileDialog, QFrame, QGridLayout, QHBoxLayout, QLabel,
@@ -43,7 +43,22 @@ class MainWindow(QMainWindow):
                  keyboard_font_path: str, assets_directory: Path) -> None:
         super().__init__()
         self.assets_directory = assets_directory
-        self.custom_lessons_path = assets_directory / "custom_lessons.json"
+        app_data = QStandardPaths.writableLocation(
+            QStandardPaths.StandardLocation.AppLocalDataLocation
+        )
+        if app_data:
+            user_data_dir = Path(app_data)
+            try:
+                user_data_dir.mkdir(parents=True, exist_ok=True)
+                self.custom_lessons_path = user_data_dir / "custom_lessons.json"
+                legacy_file = assets_directory / "custom_lessons.json"
+                if legacy_file.is_file() and not self.custom_lessons_path.is_file():
+                    import shutil
+                    shutil.copy2(legacy_file, self.custom_lessons_path)
+            except OSError:
+                self.custom_lessons_path = assets_directory / "custom_lessons.json"
+        else:
+            self.custom_lessons_path = assets_directory / "custom_lessons.json"
         self.keyboard_directory = assets_directory / "keyboards"
         self.built_in_lessons = [lesson.copy() for lesson in lessons]
         self.lessons = [*self.built_in_lessons, *load_user_lessons(self.custom_lessons_path)]

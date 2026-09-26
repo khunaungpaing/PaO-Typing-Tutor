@@ -2,7 +2,7 @@
 ; Builds a modern, clean Windows installer with fixed AppId for seamless upgrades
 
 #ifndef MyAppVersion
-#define MyAppVersion "0.1.0"
+#define MyAppVersion "1.0.0"
 #endif
 
 #define MyAppName "Pa-O Typing Tutor"
@@ -33,6 +33,8 @@ WizardStyle=modern
 ArchitecturesInstallIn64BitMode=x64compatible
 UninstallDisplayIcon={app}\{#MyAppExeName}
 DisableProgramGroupPage=auto
+CloseApplications=yes
+CloseApplicationsFilter=*Pa-O Typing Tutor.exe
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

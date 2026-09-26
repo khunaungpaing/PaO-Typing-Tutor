@@ -63,8 +63,8 @@ Pre-compiled binary packages are available for macOS and Windows on the [Release
 
 | Platform | Download Package | Requirements |
 | :--- | :--- | :--- |
-| **macOS** | [`Pa-O-Typing-Tutor-v0.1.0-macos.dmg`](https://github.com/khunaungpaing/PaO-Typing-Tutor/releases/latest) | macOS 11.0 (Big Sur) or later (Apple Silicon & Intel) |
-| **Windows** | [`Pa-O-Typing-Tutor-v0.1.0-windows-setup.exe`](https://github.com/khunaungpaing/PaO-Typing-Tutor/releases/latest) | Windows 10 or Windows 11 (64-bit) |
+| **macOS** | [`Pa-O-Typing-Tutor-v1.0.0-macos.dmg`](https://github.com/khunaungpaing/PaO-Typing-Tutor/releases/latest) | macOS 11.0 (Big Sur) or later (Apple Silicon & Intel) |
+| **Windows** | [`Pa-O-Typing-Tutor-v1.0.0-windows-setup.exe`](https://github.com/khunaungpaing/PaO-Typing-Tutor/releases/latest) | Windows 10 or Windows 11 (64-bit) |
 | **Linux** | Run from source | Python 3.9+ |
 
 ---
