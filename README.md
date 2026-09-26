@@ -11,7 +11,7 @@ A modern cross-platform desktop typing tutor for the **Pa-O Kham Dom Experimenta
 
 ## 🇲🇲 About the Pa'O Language & Script
 
-**Pa'O** (ပအိုဝ်း / ပအိုဝ်ႏ) is a Karenic language spoken by approximately **750,000 to 875,000 people**, primarily in Shan State, Mon State, and Kayin State, Myanmar.
+**Pa'O** (ပအိုဝ်းလူမျိုး) are an ethnic minority in Myanmar numbering approximately 750,000–875,000 people, primarily in Shan State, Mon State, Bago Province, Kayar State and Kayin State, Myanmar.
 
 - **Script**: Written in the Myanmar script with specialized tone marks and consonants unique to Pa'O phonology.
 - **Unicode Support**: Standardized in Unicode, including the **Myanmar Extended-C** block in **Unicode 16.0** (U+116D0–U+116FF) which encodes official Pa'O digits (`U+116D0`–`U+116D9`) and specific punctuation.
@@ -31,7 +31,7 @@ Only three Kham Dom glyphs currently lack dedicated Unicode code points. Existin
 | :--- | :--- | :--- | :--- |
 | **ထိုမ်းပါ** | `U+103E` (`ှ`) | **ထိုမ်းပါ** (Pa'O glyph) | `ှ` မူရင်းပုံစံ (Original Burmese base) |
 | **လပန်** | `U+105E` (`ၞ`) | **လပန်** (Pa'O glyph) | `ၞ` မူရင်းပုံစံ (Original Burmese base) |
-| **ခမ်းသိုမ်ဖြိုင်** | `U+108F` (`ႏ`) | **ခမ်းသိုမ်ဖြိုင်** (Pa'O glyph) | `ႏ` မူရင်းပုံစံ (Original Burmese base) |
+| **ခမ်းသိုမ်ဖြိုင်** | `U+108F` (`း`) | **ခမ်းသိုမ်ဖြိုင်** (Pa'O glyph) | `း` မူရင်းပုံစံ (Original Burmese base) |
 
 > **⚠️ အရေးကြီးသော အချက် (Important Note on `ss01`)**:
 > - **ပုံမှန် ပအိုဝ်းစာရိုက်ရန် `ss01` ဖွင့်ရန်မလိုပါ** (For normal Pa'O typing, **`ss01` is NOT required**).
@@ -46,7 +46,7 @@ Only three Kham Dom glyphs currently lack dedicated Unicode code points. Existin
 - **Virtual On-Screen Keyboard**: Visual feedback for Base and Shift states with animated target key indicators and finger positioning guidance.
 - **Native Pa-O Font Display**: Bundles `KhamThaton-Exp-Regular`, rendering authentic Pa'O Kham Dom glyphs by default.
 - **Live Typing Performance Metrics**: Real-time Words Per Minute (WPM), Characters Per Minute (CPM), Accuracy percentage, and elapsed practice time.
-- **Localized Interface**: Full user interface localization in **Pa'O** (ပအိုဝ်ႏ), **Burmese** (မြန်မာ), and **English**.
+- **Localized Interface**: Full user interface localization in **Pa'O** (ပအိုဝ်း), **Burmese** (မြန်မာ), and **English**.
 - **Interactive Lessons**:
   - Structured built-in lessons covering basic vowels, consonants, tone marks, and complete sentences.
   - Custom lesson creator and manager.

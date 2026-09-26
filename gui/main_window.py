@@ -16,7 +16,6 @@ from PyQt6.QtWidgets import (
 
 from core.content_store import (
     add_user_lesson, add_user_lessons, import_lessons, load_user_lessons,
-    save_keyboard_layout,
 )
 from core.font_features import pao_font
 from core.key_mapping import mapped_character
@@ -28,8 +27,7 @@ from core.sound_manager import SoundManager
 from core.typing_engine import CharacterResult, TypingEngine
 from gui.metrics_bar import MetricsBar
 from gui.about_dialog import AboutDialog
-from gui.content_dialogs import KeyboardLayoutDialog, LessonEditorDialog
-from gui.content_dialogs import ManageLessonsDialog
+from gui.content_dialogs import LessonEditorDialog, ManageLessonsDialog
 from gui.icons import icon
 from gui.typing_area import TypingArea
 from gui.virtual_keyboard import VirtualKeyboard
@@ -145,11 +143,6 @@ class MainWindow(QMainWindow):
         self.manage_lessons_button.setFixedSize(42, 42)
         self.manage_lessons_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.manage_lessons_button.clicked.connect(self._open_manage_lessons)
-        self.keyboard_layout_button = QPushButton()
-        self.keyboard_layout_button.setObjectName("iconButton")
-        self.keyboard_layout_button.setFixedSize(42, 42)
-        self.keyboard_layout_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.keyboard_layout_button.clicked.connect(self._open_keyboard_layouts)
         self.about_button = QPushButton()
         self.about_button.setObjectName("iconButton")
         self.about_button.setFixedSize(42, 42)
@@ -162,7 +155,6 @@ class MainWindow(QMainWindow):
         header.addWidget(self.language_picker)
         header.addWidget(self.add_lesson_button)
         header.addWidget(self.manage_lessons_button)
-        header.addWidget(self.keyboard_layout_button)
         header.addWidget(self.about_button)
         layout.addWidget(top_bar)
 
@@ -371,15 +363,6 @@ class MainWindow(QMainWindow):
         self.lesson_picker.setCurrentIndex(min(len(self.lessons) - 1,
                                                self.lesson_picker.currentIndex() + 1))
 
-    def _change_keyboard_layout(self, index: int) -> None:
-        """Activate a discovered JSON keyboard layout."""
-        if 0 <= index < len(self.keyboard_layouts):
-            self.current_layout_index = index
-            activate_layout(self.keyboard_layouts[index])
-            self.keyboard.reload_layout()
-            self._update_key_hint()
-            self.input_edit.setFocus()
-
     def _open_lesson_editor(self) -> None:
         t = self.localizer.text
         dialog = LessonEditorDialog({
@@ -441,40 +424,6 @@ class MainWindow(QMainWindow):
         self.lesson_picker.blockSignals(False)
         self._load_lesson(index)
 
-    def _open_keyboard_layouts(self) -> None:
-        t = self.localizer.text
-        dialog = KeyboardLayoutDialog(self.keyboard_layouts, self.current_layout_index, {
-            "title": t("keyboard_editor.title"), "heading": t("keyboard_editor.heading"),
-            "description": t("keyboard_editor.description"),
-            "existing": t("keyboard_editor.existing"),
-            "name_placeholder": t("keyboard_editor.name_placeholder"),
-            "physical": t("keyboard_editor.physical"), "normal": t("keyboard_editor.normal"),
-            "shift": t("keyboard_editor.shift"), "cancel": t("common.cancel"),
-            "use": t("keyboard_editor.use"), "save": t("keyboard_editor.save"),
-            "invalid": t("common.invalid"), "name_required": t("keyboard_editor.name_required"),
-        }, self)
-        if dialog.exec() != QDialog.DialogCode.Accepted:
-            return
-        if dialog.save_requested:
-            try:
-                name = dialog.name_edit.text().strip()
-                save_keyboard_layout(self.keyboard_directory, name, dialog.bindings())
-            except (OSError, ValueError) as exc:
-                QMessageBox.warning(self, t("common.invalid"), str(exc))
-                return
-            index = self._reload_keyboard_layouts(name)
-        else:
-            index = dialog.selected_index
-        self._change_keyboard_layout(index)
-
-    def _reload_keyboard_layouts(self, selected_name: str) -> int:
-        self.keyboard_layouts, self.keyboard_warnings = discover_layouts(
-            self.keyboard_directory)
-        matching = [
-            i for i, item in enumerate(self.keyboard_layouts) if item.name == selected_name
-        ]
-        return matching[-1] if matching else 0
-
     def _change_language(self, index: int) -> None:
         code = self.language_picker.itemData(index)
         if not isinstance(code, str):
@@ -500,7 +449,6 @@ class MainWindow(QMainWindow):
         self.interface_icon.setPixmap(icon(self, "globe").pixmap(15, 15))
         self.add_lesson_button.setIcon(icon(self, "plus"))
         self.manage_lessons_button.setIcon(icon(self, "list"))
-        self.keyboard_layout_button.setIcon(icon(self, "keyboard"))
         self.about_button.setIcon(icon(self, "info"))
 
     def _open_about_dialog(self) -> None:
@@ -525,7 +473,6 @@ class MainWindow(QMainWindow):
             "controls.sound_on" if self.sound_button.isChecked() else "controls.sound_off"))
         self.add_lesson_button.setToolTip(t("controls.add_lesson"))
         self.manage_lessons_button.setToolTip(t("controls.manage_lessons"))
-        self.keyboard_layout_button.setToolTip(t("controls.keyboard_layouts"))
         self.about_button.setToolTip(t("controls.about"))
         self.language_picker.setToolTip(t("controls.language"))
         self.input_edit.setPlaceholderText(t("typing.placeholder"))
