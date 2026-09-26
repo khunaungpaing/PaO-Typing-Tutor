@@ -91,13 +91,6 @@ def mapped_character(key: int, shifted: bool = False) -> str | None:
     return binding["shift" if shifted else "normal"] if binding else None
 
 
-# Unicode 16 and alternative representation aliases for target matching
-KEY_TARGET_ALIASES: Final[dict[str, tuple[int, bool]]] = {
-    "\U000116E6": (Qt.Key.Key_Comma.value, False),  # 𑛦 matches Key_Comma normal (ႏ)
-    "္လ": (Qt.Key.Key_V.value, True),               # ္လ matches Key_V shift (ၞ)
-}
-
-
 def key_for_target(remaining_target: str) -> tuple[int, bool] | None:
     """Find the longest keyboard output matching the remaining lesson text."""
     matches = [
@@ -106,10 +99,6 @@ def key_for_target(remaining_target: str) -> tuple[int, bool] | None:
         for state, output in binding.items()
         if output and remaining_target.startswith(output)
     ]
-    for alias, (key, shifted) in KEY_TARGET_ALIASES.items():
-        if remaining_target.startswith(alias):
-            matches.append((len(alias), key, shifted))
-
     if not matches:
         return None
     _, key, shifted = max(matches, key=lambda match: match[0])

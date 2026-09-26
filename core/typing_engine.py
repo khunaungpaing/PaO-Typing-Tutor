@@ -34,16 +34,9 @@ class TypingEngine:
     def update(self, typed: str) -> List[CharacterResult]:
         """Validate NFC Unicode input while preserving OpenType mark sequences."""
         self.typed = unicodedata.normalize("NFC", typed)
-
-        def _is_correct(expected: str, actual: str) -> bool:
-            if expected == actual:
-                return True
-            equivs = ({"\u108F", "\U000116E6"}, {"\u105E", "္လ"}, {"\u108B", "ႋ"})
-            return any(expected in eq and actual in eq for eq in equivs)
-
         self.results = [
             CharacterResult(i, self.target[i] if i < len(self.target) else "", char,
-                            i < len(self.target) and _is_correct(self.target[i], char))
+                            i < len(self.target) and char == self.target[i])
             for i, char in enumerate(self.typed)
         ]
         return self.results
