@@ -67,6 +67,12 @@ Pre-compiled binary packages are available for macOS and Windows on the [Release
 | **Windows** | [`Pa-O-Typing-Tutor-v1.0.0-windows-setup.exe`](https://github.com/khunaungpaing/PaO-Typing-Tutor/releases/latest) | Windows 10 or Windows 11 (64-bit) |
 | **Linux** | Run from source | Python 3.9+ |
 
+> **🔏 Code Signing Notice**:
+> Free code signing provided by [SignPath.io](https://signpath.io), certificate by [SignPath Foundation](https://signpath.org).
+>
+> **🔒 Privacy Policy**:
+> Pa-O Typing Tutor is 100% offline and collects zero telemetry or personal data. See our [Privacy Policy](PRIVACY.md).
+
 ---
 
 ## 🛡️ First-Launch Security Warnings & Workarounds
