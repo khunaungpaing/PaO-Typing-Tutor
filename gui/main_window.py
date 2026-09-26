@@ -79,6 +79,23 @@ class MainWindow(QMainWindow):
         self._load_lesson(0)
         self.physical_keyboard.start()
 
+        # Always keep focus on the typing input. When any other widget in
+        # the main window receives focus (buttons, combos, etc.), schedule
+        # an immediate refocus so the learner never has to click back.
+        from PyQt6.QtWidgets import QApplication
+        app = QApplication.instance()
+        if app is not None:
+            app.focusChanged.connect(self._on_focus_changed)
+
+    def _on_focus_changed(self, _old: QWidget | None, new: QWidget | None) -> None:
+        """Re-focus the typing input when focus drifts to another widget."""
+        if (new is not None
+                and new is not self.input_edit
+                and self.isAncestorOf(new)
+                and not self.finished
+                and self.input_edit.isEnabled()):
+            QTimer.singleShot(0, self.input_edit.setFocus)
+
     def _build_ui(self) -> None:
         root = QWidget()
         root.setObjectName("centralRoot")
@@ -283,12 +300,6 @@ class MainWindow(QMainWindow):
         title_font = pao_font(self.font_family, 22)
         title_font.setWeight(QFont.Weight.Bold)
         self.title_label.setFont(title_font)
-
-    def mouseReleaseEvent(self, event: object) -> None:
-        """Snap focus back to the typing input after any mouse interaction."""
-        super().mouseReleaseEvent(event)
-        if not self.finished and self.input_edit.isEnabled():
-            self.input_edit.setFocus()
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
         """Translate physical QWERTY events into Pa-O Unicode input."""
