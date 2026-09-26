@@ -114,7 +114,8 @@ class AboutDialog(QDialog):
             "750,000–875,000 people primarily in Shan State, Myanmar. It is written in the "
             "Myanmar script with specialized tone marks and extensions, supported in "
             "Unicode 16.0 (Myanmar Extended-C). This app features the Pa-O Kham Dom "
-            "Experimental keyboard layout and KhamThaton font with OpenType ss01 shaping."
+            "Experimental keyboard layout and KhamThaton-Exp font (authentic Kham Dom glyph "
+            "forms are rendered by default; OpenType ss01 is reserved for viewing original base glyphs)."
         )
         lang_body.setWordWrap(True)
         lang_body.setStyleSheet("color: #9fb0c7; font-size: 12px; line-height: 1.3;")

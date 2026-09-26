@@ -14,15 +14,37 @@ A modern cross-platform desktop typing tutor for the **Pa-O Kham Dom Experimenta
 **Pa'O** (ပအိုဝ်း / ပအိုဝ်ႏ) is a Karenic language spoken by approximately **750,000 to 875,000 people**, primarily in Shan State, Mon State, and Kayin State, Myanmar.
 
 - **Script**: Written in the Myanmar script with specialized tone marks and consonants unique to Pa'O phonology.
-- **Unicode Support**: Standardized in Unicode, including the **Myanmar Extended-C** block in **Unicode 16.0** (U+116D0–U+116FF) which encodes official Pa'O digits and specific punctuation.
-- **Typing Solution**: This tutor utilizes the **Pa-O Kham Dom Experimental** keyboard layout and bundles the **KhamThaton-Exp** font with OpenType `ss01` stylistic set shaping enabled, rendering accurate ligatures and tone mark positioning.
+- **Unicode Support**: Standardized in Unicode, including the **Myanmar Extended-C** block in **Unicode 16.0** (U+116D0–U+116FF) which encodes official Pa'O digits (`U+116D0`–`U+116D9`) and specific punctuation.
+- **Typing Solution**: This tutor features the **Pa-O Kham Dom Experimental** keyboard layout and bundles the **KhamThaton-Exp** font (`KhamThaton-Exp-Regular`). The font renders authentic Pa'O Kham Dom glyphs natively by default.
+
+---
+
+## 🔤 Unicode Status & Font Behavior (Unicode အခြေအနေ)
+
+### Pa'O Digits (ပအိုဝ်းနံပါတ်များ)
+Official Unicode code points for Pa'O digits (`U+116D0`–`U+116D9`) are officially standardized. The keyboard outputs them directly from the number row (`𑛐 𑛑 𑛒 𑛓 𑛔 𑛕 𑛖 𑛗 𑛘 𑛙`).
+
+### Temporary Kham Dom Substitutions (ယာယီအစားထိုးသုံးထားသော အက္ခရာများ)
+Only three Kham Dom glyphs currently lack dedicated Unicode code points. Existing Unicode values are temporarily used as substitutes in this keyboard layout:
+
+| လိုအပ်နေသေးသော ပအိုဝ်းပုံစံ (Required Pa'O Shape) | Keyboard Output | Font ပုံမှန်အသုံးပြုလျှင် (Default Display) | `ss01` ဖွင့်လျှင် (`ss01` Enabled) |
+| :--- | :--- | :--- | :--- |
+| **ထိုမ်းပါ** | `U+103E` (`ှ`) | **ထိုမ်းပါ** (Pa'O glyph) | `ှ` မူရင်းပုံစံ (Original Burmese base) |
+| **လပန်** | `U+105E` (`ၞ`) | **လပန်** (Pa'O glyph) | `ၞ` မူရင်းပုံစံ (Original Burmese base) |
+| **ခမ်းသိုမ်ဖြိုင်** | `U+108F` (`ႏ`) | **ခမ်းသိုမ်ဖြိုင်** (Pa'O glyph) | `ႏ` မူရင်းပုံစံ (Original Burmese base) |
+
+> **⚠️ အရေးကြီးသော အချက် (Important Note on `ss01`)**:
+> - **ပုံမှန် ပအိုဝ်းစာရိုက်ရန် `ss01` ဖွင့်ရန်မလိုပါ** (For normal Pa'O typing, **`ss01` is NOT required**).
+> - `KhamThaton-Exp` font ကို ပုံမှန်အသုံးပြုလျှင် အထက်ပါ ပအိုဝ်းစာလုံးပုံစံများကို တိုက်ရိုက်မြင်တွေ့ရမည်ဖြစ်သည်။ (The font renders authentic Pa'O Kham Dom glyphs by default).
+> - `ss01` (Stylistic Set 1) သည် ယာယီအစားထိုးယူထားသော Unicode glyph ၏ **မူရင်းပုံသဏ္ဍာန်ကို စစ်ဆေးရန်သာ** အသုံးပြုပါသည် (`ss01` is strictly for inspecting the original base glyph).
+> - နောင်တွင် အက္ခရာသုံးလုံးအတွက် တရားဝင် Unicode code point များ ရရှိလာပါက ယခုယာယီ output များကို မှန်ကန်သော code point များသို့ ပြန်ပြောင်းပေးမည့် converter ကို ထုတ်ပေးမည်ဖြစ်ပါသည်။
 
 ---
 
 ## ✨ Features
 
 - **Virtual On-Screen Keyboard**: Visual feedback for Base and Shift states with animated target key indicators and finger positioning guidance.
-- **Native Pa-O Font Shaping**: Bundles `KhamThaton-Exp-Regular` with OpenType `ss01` feature enabled for proper Kham Dom glyph rendering.
+- **Native Pa-O Font Display**: Bundles `KhamThaton-Exp-Regular`, rendering authentic Pa'O Kham Dom glyphs by default.
 - **Live Typing Performance Metrics**: Real-time Words Per Minute (WPM), Characters Per Minute (CPM), Accuracy percentage, and elapsed practice time.
 - **Localized Interface**: Full user interface localization in **Pa'O** (ပအိုဝ်ႏ), **Burmese** (မြန်မာ), and **English**.
 - **Interactive Lessons**:
@@ -123,7 +145,7 @@ python main.py
 ```text
 PaO-Typing-Tutor/
 ├── assets/                  # Application resources
-│   ├── fonts/               # KhamThaton font files with OpenType ss01
+│   ├── fonts/               # KhamThaton font files (native Kham Dom glyphs)
 │   ├── img/                 # App icons (PNG, ICNS, ICO)
 │   ├── keyboards/           # Keyboard layout definitions
 │   ├── locales/             # Translations (en.json, my.json, pao.json)
@@ -132,7 +154,7 @@ PaO-Typing-Tutor/
 │   └── lessons.json         # Built-in course lessons
 ├── core/                    # Core business logic (no GUI dependencies)
 │   ├── content_store.py     # User lesson and layout storage
-│   ├── font_features.py     # OpenType font configuration
+│   ├── font_features.py     # Font styling configuration
 │   ├── key_mapping.py       # Key mapping algorithms and defaults
 │   ├── keyboard_layouts.py  # Layout discovery and parsing
 │   ├── keyboard_listener.py # Global physical keyboard hook (pynput)
@@ -169,7 +191,7 @@ PaO-Typing-Tutor/
 | :--- | :--- |
 | `core/version.py` | Single source of truth for versioning, app IDs, author, and license information |
 | `core/typing_engine.py` | State machine processing key strokes, comparing targets, recording error positions |
-| `core/font_features.py` | Configures `ss01` OpenType stylistic sets for Kham Dom character shaping |
+| `core/font_features.py` | Font styling and typography configuration |
 | `gui/about_dialog.py` | Displays version, Pa'O language background, and MIT License |
 | `gui/virtual_keyboard.py` | Draws virtual keyboard, handles key shift transformations and active highlights |
 | `installer.iss` | Windows Inno Setup compiler script with persistent AppId |
