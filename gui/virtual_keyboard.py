@@ -28,10 +28,74 @@ KEY_ROWS: Final[list[list[int]]] = [
     [Qt.Key.Key_Space.value],
 ]
 
-# Display-only PUA glyphs from KhamThaton. Keyboard input continues to emit
-# the Unicode sequences defined in PAO_KEY_MAP.
-KEYCAP_DISPLAY_MAP: Final[dict[str, str]] = {
-    "္လ": "\uE020",
+# Pa-O Kham Dom Experimental visual keyboard source mapping.
+# Dotted circles (U+25CC) are added to combining marks so their relative positioning is clear.
+VISUAL_KEY_MAP: Final[dict[int, dict[str, str]]] = {
+    Qt.Key.Key_QuoteLeft.value: {"normal": "\u1050", "shift": "\u100E"},
+    Qt.Key.Key_1.value: {"normal": "\U000116D1", "shift": "\u100D"},
+    Qt.Key.Key_2.value: {"normal": "\U000116D2", "shift": "\u1020"},
+    Qt.Key.Key_3.value: {"normal": "\U000116D3", "shift": "\u100B"},
+    Qt.Key.Key_4.value: {"normal": "\U000116D4", "shift": "\u1053"},
+    Qt.Key.Key_5.value: {"normal": "\U000116D5", "shift": "\u1054"},
+    Qt.Key.Key_6.value: {"normal": "\U000116D6", "shift": "\u1055"},
+    Qt.Key.Key_7.value: {"normal": "\U000116D7", "shift": "\u101B"},
+    Qt.Key.Key_8.value: {"normal": "\U000116D8", "shift": "*"},
+    Qt.Key.Key_9.value: {"normal": "\U000116D9", "shift": "("},
+    Qt.Key.Key_0.value: {"normal": "\U000116D0", "shift": ")"},
+    Qt.Key.Key_Minus.value: {"normal": "-", "shift": "_"},
+    Qt.Key.Key_Equal.value: {"normal": "=", "shift": "+"},
+    Qt.Key.Key_Q.value: {"normal": "\u1006", "shift": "\u1008"},
+    Qt.Key.Key_W.value: {"normal": "\u1010", "shift": "\u101D"},
+    Qt.Key.Key_E.value: {"normal": "\u1014", "shift": "\u1023"},
+    Qt.Key.Key_R.value: {"normal": "\u1019", "shift": "\u104E"},
+    Qt.Key.Key_T.value: {"normal": "\u1021", "shift": "\u1024"},
+    Qt.Key.Key_Y.value: {"normal": "\u1015", "shift": "\u104C"},
+    Qt.Key.Key_U.value: {"normal": "\u1000", "shift": "\u1025"},
+    Qt.Key.Key_I.value: {"normal": "\u1004", "shift": "\u104D"},
+    Qt.Key.Key_O.value: {"normal": "\u101E", "shift": "\u103F"},
+    Qt.Key.Key_P.value: {"normal": "\u1005", "shift": "\u100F"},
+    Qt.Key.Key_BracketLeft.value: {"normal": "\u101F", "shift": "\u1027"},
+    Qt.Key.Key_BracketRight.value: {"normal": "\u1029", "shift": "\u102A"},
+    Qt.Key.Key_Backslash.value: {"normal": "\u104F", "shift": "\u1051"},
+    Qt.Key.Key_A.value: {"normal": "\u25CC\u1031", "shift": "\u1017"},
+    Qt.Key.Key_S.value: {"normal": "\u25CC\u103B", "shift": "\u25CC\u103E"},
+    Qt.Key.Key_D.value: {"normal": "\u25CC\u102D", "shift": "\u25CC\u102E"},
+    Qt.Key.Key_F.value: {"normal": "\u25CC\u103A", "shift": "\u25CC\u1039"},
+    Qt.Key.Key_G.value: {"normal": "\u102B", "shift": "\u25CC\u103D"},
+    Qt.Key.Key_H.value: {"normal": "\u1037", "shift": "\u25CC\u1036"},
+    Qt.Key.Key_J.value: {"normal": "\u25CC\u103C", "shift": "\u25CC\u1032"},
+    Qt.Key.Key_K.value: {"normal": "\u25CC\u102F", "shift": "\u1012"},
+    Qt.Key.Key_L.value: {"normal": "\u25CC\u1030", "shift": "\u1013"},
+    Qt.Key.Key_Semicolon.value: {"normal": "\u25CC\u1038", "shift": "\u1002"},
+    Qt.Key.Key_Apostrophe.value: {"normal": "'", "shift": '"'},
+    Qt.Key.Key_Z.value: {"normal": "\u1016", "shift": "\u1007"},
+    Qt.Key.Key_X.value: {"normal": "\u1011", "shift": "\u100C"},
+    Qt.Key.Key_C.value: {"normal": "\u1001", "shift": "\u1003"},
+    Qt.Key.Key_V.value: {"normal": "\u101C", "shift": "\u105E"},
+    Qt.Key.Key_B.value: {"normal": "\u1018", "shift": "\u101A"},
+    Qt.Key.Key_N.value: {"normal": "\u100A", "shift": "\u1009"},
+    Qt.Key.Key_M.value: {"normal": "\u102C", "shift": "\u1026"},
+    Qt.Key.Key_Comma.value: {"normal": "\u108F", "shift": "\u104A"},
+    Qt.Key.Key_Period.value: {"normal": "\u108B", "shift": "\u104B"},
+    Qt.Key.Key_Slash.value: {"normal": "/", "shift": "?"},
+    Qt.Key.Key_Space.value: {"normal": " ", "shift": " "},
+}
+
+COMBINING_DISPLAY_MAP: Final[dict[str, str]] = {
+    "\u1031": "\u25CC\u1031",  # ◌ေ
+    "\u103B": "\u25CC\u103B",  # ◌ျ
+    "\u102D": "\u25CC\u102D",  # ◌ိ
+    "\u103A": "\u25CC\u103A",  # ◌်
+    "\u103C": "\u25CC\u103C",  # ◌ြ
+    "\u102F": "\u25CC\u102F",  # ◌ု
+    "\u1030": "\u25CC\u1030",  # ◌ူ
+    "\u1038": "\u25CC\u1038",  # ◌း
+    "\u103E": "\u25CC\u103E",  # ◌ှ
+    "\u102E": "\u25CC\u102E",  # ◌ီ
+    "\u1039": "\u25CC\u1039",  # ◌္
+    "\u103D": "\u25CC\u103D",  # ◌ွ
+    "\u1036": "\u25CC\u1036",  # ◌ံ
+    "\u1032": "\u25CC\u1032",  # ◌ဲ
 }
 
 
@@ -186,17 +250,28 @@ class VirtualKeyboardWidget(QWidget):
         if match is None:
             return None
         key, shifted = match
-        return PAO_KEY_MAP[key]["shift" if shifted else "normal"]
+        state = "shift" if shifted else "normal"
+        visual = VISUAL_KEY_MAP.get(key, {}).get(state)
+        if visual:
+            return visual
+        return PAO_KEY_MAP[key][state]
 
     def _refresh(self) -> None:
         state = "shift" if self._shifted else "normal"
         for key, button in self.keys.items():
-            character = PAO_KEY_MAP[key][state]
             if key == Qt.Key.Key_Space.value:
                 button.setText("Spacebar")
+                continue
+
+            character = PAO_KEY_MAP.get(key, {}).get(state, "")
+            visual = VISUAL_KEY_MAP.get(key, {}).get(state)
+
+            if visual and (character == "" or character == visual.replace("\u25CC", "")):
+                display_text = visual
             else:
-                display_text = KEYCAP_DISPLAY_MAP.get(character, character)
-                button.setText("U+200B" if display_text == "\u200b" else display_text)
+                display_text = COMBINING_DISPLAY_MAP.get(character, character)
+
+            button.setText("U+200B" if display_text == "\u200b" else display_text)
         self._refresh_styles()
 
     def _refresh_styles(self) -> None:

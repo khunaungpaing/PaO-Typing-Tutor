@@ -534,7 +534,12 @@ class MainWindow(QMainWindow):
             # incorrect or missing space is impossible to locate visually.
             escaped = html.escape("␣" if character == " " else character)
             if index < len(self.engine.typed):
-                color = "#4ade80" if self.engine.typed[index] == character else "#f87171"
+                is_correct = (
+                    self.engine.results[index].correct
+                    if index < len(self.engine.results)
+                    else (self.engine.typed[index] == character)
+                )
+                color = "#4ade80" if is_correct else "#f87171"
                 parts.append(f'<span style="color:{color};">{escaped}</span>')
             elif index == len(self.engine.typed):
                 parts.append(f'<span style="background-color:#4c1d95;color:#fff;">{escaped}</span>')
