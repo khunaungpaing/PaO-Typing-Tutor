@@ -5,16 +5,15 @@ from __future__ import annotations
 from PyQt6.QtGui import QFont
 
 
-PAO_STYLISTIC_SET = "ss01"
-
-
 def enable_pao_shaping(font: QFont) -> QFont:
-    """Return a copy of ``font`` with KhamThaton's Pa-O forms enabled."""
-    configured = QFont(font)
-    configured.setFeature(QFont.Tag.fromString(PAO_STYLISTIC_SET), 1)
-    return configured
+    """Return font configured for native Pa-O rendering without enabling ss01.
+
+    In KhamThaton-Exp font, native Pa-O Kham Dom glyphs are displayed by default.
+    OpenType ss01 is NOT enabled, as it would revert to original base glyphs.
+    """
+    return QFont(font)
 
 
 def pao_font(family: str, point_size: int) -> QFont:
-    """Build a font that renders temporary Kham Dom sequences correctly."""
-    return enable_pao_shaping(QFont(family, point_size))
+    """Build a font configured for native Pa-O text rendering."""
+    return QFont(family, point_size)

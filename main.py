@@ -14,7 +14,7 @@ from gui.main_window import MainWindow
 
 # --- System Path Mappings ---
 BASE_DIR = Path(__file__).resolve().parent
-FONT_PATH = BASE_DIR / "assets" / "fonts" / "KhamThaton-Exp-Regular-0.1.ttf"
+FONT_PATH = BASE_DIR / "assets" / "fonts" / "KhamThaton-Exp-Regular-0.2.ttf"
 KEYBOARD_FONT_PATH = FONT_PATH
 FONT_FALLBACKS = (
     BASE_DIR / "assets" / "fonts" / "Thuwana-Regular.otf",

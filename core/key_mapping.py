@@ -10,7 +10,7 @@ from PyQt6.QtCore import Qt
 # Base and Shift rules transcribed from pa_o_kham_dom.kmn. Each value is the
 # exact Unicode string emitted by that physical key. Supplementary-plane Pa-O
 # digits must remain full scalar values and temporary Kham Dom encodings must
-# remain multi-codepoint strings so KhamThaton's ss01 feature can shape them.
+# remain multi-codepoint strings so the KhamThaton font renders them natively.
 BUILTIN_LAYOUT_NAME: Final[str] = "Pa-O Kham Dom Experimental"
 
 PAO_KEY_MAP: Final[dict[int, dict[str, str]]] = {
