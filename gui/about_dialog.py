@@ -110,8 +110,8 @@ class AboutDialog(QDialog):
         lang_heading = QLabel("About Pa'O Language & Script")
         lang_heading.setStyleSheet("font-weight: 700; color: #8978ff; font-size: 12px;")
         lang_body = QLabel(
-            "Pa'O (ပအိုဝ်း / ပအိုဝ်ႏ) is a Karenic language spoken by approximately "
-            "750,000–875,000 people primarily in Shan State, Myanmar. It is written in the "
+            "Pa'O (ပအိုဝ်းလူမျိုး) are an ethnic minority in Myanmar numbering approximately 750,000–875,000 people, "
+            "primarily in Shan State, Mon State, Bago Province, Kayar State and Kayin State, Myanmar. It is written in the "
             "Myanmar script with specialized tone marks and extensions, supported in "
             "Unicode 16.0 (Myanmar Extended-C). This app features the Pa-O Kham Dom "
             "Experimental keyboard layout and KhamThaton-Exp font (authentic Kham Dom glyph "
