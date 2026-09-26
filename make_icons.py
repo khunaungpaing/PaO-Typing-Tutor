@@ -29,7 +29,7 @@ SRC = ROOT / "assets" / "img" / "app.png"
 ICNS = ROOT / "assets" / "img" / "app.icns"
 ICO = ROOT / "assets" / "img" / "app.ico"
 
-ICO_SIZES = [16, 32, 48, 64, 128, 256]
+ICO_SIZES = [16, 24, 32, 48, 64, 128, 256]
 ICNS_SIZES = [16, 32, 64, 128, 256, 512, 1024]
 
 _ICNS_TAG = {
@@ -79,19 +79,31 @@ def _assemble_png_ico(png_data_by_size: list[tuple[int, bytes]], dst: Path) -> N
 
 
 def make_ico(src: Path, dst: Path) -> None:
-    """Create Windows .ico with 16, 32, 48, 64, 128, 256 sizes."""
+    """Create Windows .ico with multiple sizes for sharp display at all DPI levels."""
     try:
         from PIL import Image
 
         img = Image.open(src).convert("RGBA")
-        resized = [img.resize((s, s), Image.LANCZOS) for s in ICO_SIZES]
-        resized[0].save(
+        # Build per-size images with high-quality LANCZOS resampling
+        layers = [img.resize((s, s), Image.LANCZOS) for s in ICO_SIZES]
+        # Pillow needs the image list passed via append_images and the size
+        # list as tuples. The first element is the base (smallest is safest).
+        layers[0].save(
             dst,
             format="ICO",
             sizes=[(s, s) for s in ICO_SIZES],
-            append_images=resized[1:],
+            append_images=layers[1:],
         )
-        print(f"  created  {dst.relative_to(ROOT)} (Pillow)")
+        # Verify by re-reading frame count
+        check = Image.open(dst)
+        frames = [check.size]
+        while True:
+            try:
+                check.seek(check.tell() + 1)
+                frames.append(check.size)
+            except EOFError:
+                break
+        print(f"  created  {dst.relative_to(ROOT)} (Pillow) — frames: {sorted(set(frames))}")
         return
     except ImportError:
         pass

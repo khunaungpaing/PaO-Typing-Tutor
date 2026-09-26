@@ -16,18 +16,18 @@ class MetricsBar(QFrame):
         super().__init__(parent)
         self.localize_digits = localize_digits or (lambda value: value)
         self.setObjectName("metricsBar")
-        self.setFixedHeight(76)
+        self.setFixedHeight(60)
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(12)
+        layout.setSpacing(8)
         self.values: Dict[str, QLabel] = {}
         self.headings: Dict[str, QLabel] = {}
         for key, title in (("time", "TIME"), ("wpm", "WPM"), ("cpm", "CPM"), ("accuracy", "ACCURACY")):
             card = QFrame()
             card.setObjectName("metricCard")
             card_layout = QVBoxLayout(card)
-            card_layout.setContentsMargins(18, 9, 18, 9)
-            card_layout.setSpacing(2)
+            card_layout.setContentsMargins(14, 6, 14, 6)
+            card_layout.setSpacing(1)
             heading = QLabel(title)
             heading.setObjectName("metricHeading")
             initial = "00:00" if key == "time" else "0"

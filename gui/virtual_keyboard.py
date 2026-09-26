@@ -171,7 +171,7 @@ class VirtualKeyboardWidget(QWidget):
 
     def __init__(self, font_path: Path, fallback_family: str, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        self.setMinimumHeight(290)
+        self.setMinimumHeight(230)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self._shifted = False
         self._pressed_key: int | None = None
@@ -184,8 +184,8 @@ class VirtualKeyboardWidget(QWidget):
 
         grid = QGridLayout(self)
         grid.setContentsMargins(0, 0, 0, 0)
-        grid.setHorizontalSpacing(5)
-        grid.setVerticalSpacing(5)
+        grid.setHorizontalSpacing(4)
+        grid.setVerticalSpacing(4)
         for row_index, row in enumerate(KEY_ROWS):
             offset = row_index if row_index < 4 else 4
             for column, key in enumerate(row):
@@ -195,8 +195,8 @@ class VirtualKeyboardWidget(QWidget):
                 button.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
                 button.setFont(self._key_font)
                 button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-                button.setMinimumHeight(48)
-                button.setMaximumHeight(52)
+                button.setMinimumHeight(38)
+                button.setMaximumHeight(42)
                 span = 18 if key == Qt.Key.Key_Space.value else 2
                 grid.addWidget(button, row_index, offset + column * 2, 1, span)
                 self.keys[key] = button
@@ -205,8 +205,8 @@ class VirtualKeyboardWidget(QWidget):
             shift.setObjectName("modifierKey")
             shift.setFocusPolicy(Qt.FocusPolicy.NoFocus)
             shift.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-            shift.setMinimumHeight(48)
-            shift.setMaximumHeight(52)
+            shift.setMinimumHeight(38)
+            shift.setMaximumHeight(42)
             grid.addWidget(shift, 4, column, 1, span)
             self.shift_keys.append(shift)
         grid.addWidget(self.hand_overlay, 5, 0, 1, 26)

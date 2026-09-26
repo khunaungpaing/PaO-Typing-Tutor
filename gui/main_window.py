@@ -81,8 +81,8 @@ class MainWindow(QMainWindow):
         self.finished = False
         self.error_history: List[CharacterResult] = []
         self.setWindowTitle(NATIVE_WINDOW_TITLE)
-        self.setMinimumSize(900, 760)
-        self.resize(1180, 1050)
+        self.setMinimumSize(820, 660)
+        self.resize(1100, 820)
         self._build_ui()
         self._translate_ui()
         self._apply_theme()
@@ -113,14 +113,14 @@ class MainWindow(QMainWindow):
         root = QWidget()
         root.setObjectName("centralRoot")
         layout = QVBoxLayout(root)
-        layout.setContentsMargins(28, 22, 28, 10)
-        layout.setSpacing(14)
+        layout.setContentsMargins(16, 12, 16, 8)
+        layout.setSpacing(8)
 
         top_bar = QFrame()
         top_bar.setObjectName("topBar")
         header = QHBoxLayout(top_bar)
-        header.setContentsMargins(18, 12, 18, 12)
-        header.setSpacing(10)
+        header.setContentsMargins(14, 8, 14, 8)
+        header.setSpacing(8)
         self.title_label = QLabel()
         self.title_label.setObjectName("appTitle")
         self.title_label.setMaximumWidth(520)
@@ -176,8 +176,8 @@ class MainWindow(QMainWindow):
         lesson_bar = QFrame()
         lesson_bar.setObjectName("lessonBar")
         lesson_layout = QHBoxLayout(lesson_bar)
-        lesson_layout.setContentsMargins(12, 10, 12, 10)
-        lesson_layout.setSpacing(10)
+        lesson_layout.setContentsMargins(8, 6, 8, 6)
+        lesson_layout.setSpacing(8)
         lesson_layout.addWidget(self.previous_button)
         lesson_layout.addWidget(self.lesson_picker, 1)
         lesson_layout.addWidget(self.next_button)
@@ -200,16 +200,11 @@ class MainWindow(QMainWindow):
         keyboard_card = QFrame()
         keyboard_card.setObjectName("keyboardCard")
         keyboard_layout = QVBoxLayout(keyboard_card)
-        keyboard_layout.setContentsMargins(14, 14, 14, 10)
+        keyboard_layout.setContentsMargins(10, 8, 10, 6)
         self.keyboard = VirtualKeyboard(Path(self.keyboard_font_path), self.font_family)
         keyboard_layout.addWidget(self.keyboard)
         layout.addWidget(keyboard_card, 1)
-        scroll = QScrollArea()
-        scroll.setObjectName("mainScroll")
-        scroll.setFrameShape(QFrame.Shape.NoFrame)
-        scroll.setWidgetResizable(True)
-        scroll.setWidget(root)
-        self.setCentralWidget(scroll)
+        self.setCentralWidget(root)
         self._refresh_icons()
 
     def _apply_theme(self) -> None:
@@ -224,49 +219,49 @@ class MainWindow(QMainWindow):
             QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{ height: 0; }}
             QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {{ background: transparent; }}
             QLabel {{ background: transparent; }}
-            #topBar {{ background: #111a2b; border: 1px solid #1d2b42; border-radius: 12px; }}
-            #appTitle {{ font-size: 22px; font-weight: 700; color: #f8fafc; }}
+            #topBar {{ background: #111a2b; border: 1px solid #1d2b42; border-radius: 10px; }}
+            #appTitle {{ font-size: 18px; font-weight: 700; color: #f8fafc; }}
             #contextLabel {{ color: #91a2b9; font-size: 11px; font-weight: 600; }}
             #contextIcon {{ min-width: 16px; max-width: 16px; }}
             #lessonBar {{ background: transparent; }}
             QComboBox {{ background: #172235; border: 1px solid #2b3a52;
-                border-radius: 12px; padding: 8px 34px 8px 12px; color: #edf2f9; min-height: 24px; }}
+                border-radius: 10px; padding: 6px 30px 6px 10px; color: #edf2f9; min-height: 20px; }}
             QComboBox:hover {{ border-color: #4a5e7a; }}
             QComboBox:focus {{ border: 1px solid #7c6df2; }}
-            QComboBox::drop-down {{ border: 0; width: 30px; }}
+            QComboBox::drop-down {{ border: 0; width: 28px; }}
             QComboBox QAbstractItemView {{ background: #172235; border: 1px solid #344661;
-                border-radius: 12px; padding: 6px; selection-background-color: #6d5ce7; }}
-            QComboBox#languagePicker {{ min-width: 110px; max-width: 145px; }}
-            #practiceCard {{ background: #111a2b; border: 1px solid #1d2b42; border-radius: 12px; }}
+                border-radius: 10px; padding: 4px; selection-background-color: #6d5ce7; }}
+            QComboBox#languagePicker {{ min-width: 100px; max-width: 130px; }}
+            #practiceCard {{ background: #111a2b; border: 1px solid #1d2b42; border-radius: 10px; }}
             #typingInput {{ background: #0c1424; border: 1px solid #2a3951;
-                border-radius: 12px; padding: 11px 15px; color: #f8fafc;
-                font-size: 19px; min-height: 32px; selection-background-color: #6757df; }}
-            #typingInput:focus {{ border: 2px solid #7565e8; padding: 10px 14px; }}
+                border-radius: 10px; padding: 9px 13px; color: #f8fafc;
+                font-size: 18px; min-height: 28px; selection-background-color: #6757df; }}
+            #typingInput:focus {{ border: 2px solid #7565e8; padding: 8px 12px; }}
             #metricsBar {{ background: transparent; }}
-            #metricCard {{ background: #111a2b; border: 1px solid #1d2b42; border-radius: 12px; }}
-            #metricHeading {{ color: #7f91ab; font-size: 10px; font-weight: 700; }}
-            #metricValue {{ color: #f5f7fb; font-size: 23px; font-weight: 700; }}
-            #targetText {{ background: #0c1424; border: 1px solid #17243a; border-radius: 12px;
-                padding: 28px; font-size: 28px; line-height: 1.5; }}
-            #hintText {{ color: #93a4bc; font-size: 12px; }}
-            #primaryButton {{ background: #6d5ce7; color: white; border: 0; border-radius: 12px;
-                padding: 9px 18px; font-weight: 700; }}
+            #metricCard {{ background: #111a2b; border: 1px solid #1d2b42; border-radius: 10px; }}
+            #metricHeading {{ color: #7f91ab; font-size: 9px; font-weight: 700; }}
+            #metricValue {{ color: #f5f7fb; font-size: 20px; font-weight: 700; }}
+            #targetText {{ background: #0c1424; border: 1px solid #17243a; border-radius: 10px;
+                padding: 16px; font-size: 26px; line-height: 1.4; }}
+            #hintText {{ color: #93a4bc; font-size: 11px; }}
+            #primaryButton {{ background: #6d5ce7; color: white; border: 0; border-radius: 10px;
+                padding: 8px 16px; font-weight: 700; }}
             #primaryButton:hover {{ background: #7b6bef; }}
             #primaryButton:pressed {{ background: #5b4bc9; }}
             #secondaryButton, #iconButton {{ background: #151f31; color: #d9e2ef;
-                border: 1px solid #2b3a52; border-radius: 12px; padding: 8px; font-weight: 600; }}
+                border: 1px solid #2b3a52; border-radius: 10px; padding: 6px; font-weight: 600; }}
             #secondaryButton:hover, #iconButton:hover {{ background: #1c2940; border-color: #647d9f; }}
             #iconButton:checked {{ background: #352e66; border-color: #7867ff; }}
             #secondaryButton:disabled {{ color: #4c5b70; border-color: #1b293d; background: #101827; }}
-            #keyboardCard {{ background: #0e1727; border: 1px solid #1d2b42; border-radius: 12px; }}
+            #keyboardCard {{ background: #0e1727; border: 1px solid #1d2b42; border-radius: 10px; }}
             #keyboardKey {{ background: #1b2940; color: #c8d3e2; border: 1px solid #2e405b;
-                border-radius: 12px; padding: 2px; font-family: '{self.keyboard.font_family}';
-                font-size: 18px; font-weight: 600; }}
+                border-radius: 8px; padding: 1px; font-family: '{self.keyboard.font_family}';
+                font-size: 16px; font-weight: 600; }}
             #keyboardKey[target="true"] {{ background: #26224d; color: white; border: 3px solid #8978ff; }}
             #keyboardKey[targetShift="true"] {{ background: #25264c; border: 3px solid #4cc9f0; }}
             #keyboardKey[pressed="true"] {{ background: #dc8b1e; color: #0b1120; border: 2px solid #ffc45c; }}
             #modifierKey {{ background: #151f31; color: #8fa1ba; border: 1px solid #2b3a52;
-                border-radius: 12px; font-size: 11px; font-weight: 700; }}
+                border-radius: 8px; font-size: 10px; font-weight: 700; }}
             #modifierKey[active="true"] {{ background: #6d5ce7; color: white; border: 2px solid #a99cff; }}
             #resultDialog {{ background: #0f172a; }}
             #resultHero {{ background: #172554; border: 1px solid #3730a3; border-radius: 18px; }}
