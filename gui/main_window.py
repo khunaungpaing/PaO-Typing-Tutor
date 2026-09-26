@@ -100,10 +100,12 @@ class MainWindow(QMainWindow):
         self.previous_button = QPushButton()
         self.previous_button.setObjectName("secondaryButton")
         self.previous_button.setFixedSize(42, 42)
+        self.previous_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.previous_button.clicked.connect(self._previous_lesson)
         self.next_button = QPushButton()
         self.next_button.setObjectName("secondaryButton")
         self.next_button.setFixedSize(42, 42)
+        self.next_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.next_button.clicked.connect(self._next_lesson)
         self.language_picker = QComboBox()
         self.language_picker.setObjectName("languagePicker")
@@ -119,18 +121,22 @@ class MainWindow(QMainWindow):
         self.add_lesson_button = QPushButton()
         self.add_lesson_button.setObjectName("iconButton")
         self.add_lesson_button.setFixedSize(42, 42)
+        self.add_lesson_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.add_lesson_button.clicked.connect(self._open_lesson_editor)
         self.manage_lessons_button = QPushButton()
         self.manage_lessons_button.setObjectName("iconButton")
         self.manage_lessons_button.setFixedSize(42, 42)
+        self.manage_lessons_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.manage_lessons_button.clicked.connect(self._open_manage_lessons)
         self.keyboard_layout_button = QPushButton()
         self.keyboard_layout_button.setObjectName("iconButton")
         self.keyboard_layout_button.setFixedSize(42, 42)
+        self.keyboard_layout_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.keyboard_layout_button.clicked.connect(self._open_keyboard_layouts)
         self.about_button = QPushButton()
         self.about_button.setObjectName("iconButton")
         self.about_button.setFixedSize(42, 42)
+        self.about_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.about_button.clicked.connect(self._open_about_dialog)
         header.addWidget(self.title_label, 1)
         header.addStretch()
@@ -277,6 +283,12 @@ class MainWindow(QMainWindow):
         title_font = pao_font(self.font_family, 22)
         title_font.setWeight(QFont.Weight.Bold)
         self.title_label.setFont(title_font)
+
+    def mouseReleaseEvent(self, event: object) -> None:
+        """Snap focus back to the typing input after any mouse interaction."""
+        super().mouseReleaseEvent(event)
+        if not self.finished and self.input_edit.isEnabled():
+            self.input_edit.setFocus()
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
         """Translate physical QWERTY events into Pa-O Unicode input."""
