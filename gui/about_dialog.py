@@ -13,6 +13,7 @@ from PyQt6.QtWidgets import (
     QLabel,
     QPlainTextEdit,
     QPushButton,
+    QScrollArea,
     QTabWidget,
     QVBoxLayout,
     QWidget,
@@ -38,7 +39,8 @@ class AboutDialog(QDialog):
         self.setObjectName("contentDialog")
         self.setWindowTitle(f"About {APP_NAME}")
         self.setModal(True)
-        self.resize(540, 520)
+        self.setMinimumSize(560, 580)
+        self.resize(600, 640)
 
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(20, 20, 20, 20)
@@ -74,8 +76,15 @@ class AboutDialog(QDialog):
         dialog.exec()
 
     def _create_about_tab(self, assets_dir: Path | None) -> QWidget:
-        tab = QWidget()
-        layout = QVBoxLayout(tab)
+        scroll = QScrollArea()
+        scroll.setObjectName("aboutScroll")
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.Shape.NoFrame)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+
+        container = QWidget()
+        container.setObjectName("aboutContainer")
+        layout = QVBoxLayout(container)
         layout.setContentsMargins(16, 16, 16, 16)
         layout.setSpacing(12)
 
@@ -114,11 +123,11 @@ class AboutDialog(QDialog):
         lang_card = QFrame()
         lang_card.setObjectName("infoCard")
         lang_layout = QVBoxLayout(lang_card)
-        lang_layout.setContentsMargins(12, 10, 12, 10)
-        lang_layout.setSpacing(4)
+        lang_layout.setContentsMargins(14, 12, 14, 12)
+        lang_layout.setSpacing(6)
 
         lang_heading = QLabel("About Pa'O Language & Script")
-        lang_heading.setStyleSheet("font-weight: 700; color: #8978ff; font-size: 12px;")
+        lang_heading.setStyleSheet("font-weight: 700; color: #8978ff; font-size: 13px;")
         lang_body = QLabel(
             "Pa'O (ပအိုဝ်းလူမျိုး) are an ethnic minority in Myanmar numbering approximately 750,000–875,000 people, "
             "primarily in Shan State, Mon State, Bago Province, Kayar State and Kayin State, Myanmar. It is written in the "
@@ -128,7 +137,7 @@ class AboutDialog(QDialog):
             "forms are rendered by default; OpenType ss01 is reserved for viewing original base glyphs)."
         )
         lang_body.setWordWrap(True)
-        lang_body.setStyleSheet("color: #9fb0c7; font-size: 12px; line-height: 1.3;")
+        lang_body.setStyleSheet("color: #9fb0c7; font-size: 12px; line-height: 1.4;")
         lang_layout.addWidget(lang_heading)
         lang_layout.addWidget(lang_body)
         layout.addWidget(lang_card)
@@ -137,8 +146,8 @@ class AboutDialog(QDialog):
         meta_card = QFrame()
         meta_card.setObjectName("infoCard")
         meta_layout = QVBoxLayout(meta_card)
-        meta_layout.setContentsMargins(12, 8, 12, 8)
-        meta_layout.setSpacing(4)
+        meta_layout.setContentsMargins(14, 10, 14, 10)
+        meta_layout.setSpacing(6)
 
         author_label = QLabel(f"<b>Author:</b> {AUTHOR} &nbsp;&middot;&nbsp; {COPYRIGHT}")
         author_label.setStyleSheet("color: #cad5e2; font-size: 12px;")
@@ -151,7 +160,9 @@ class AboutDialog(QDialog):
 
         layout.addWidget(meta_card)
         layout.addStretch()
-        return tab
+
+        scroll.setWidget(container)
+        return scroll
 
     def _create_license_tab(self) -> QWidget:
         tab = QWidget()
@@ -180,6 +191,10 @@ class AboutDialog(QDialog):
         self.setStyleSheet("""
             QDialog#contentDialog {
                 background: #0b1220;
+            }
+            #aboutScroll, #aboutContainer {
+                background: transparent;
+                border: 0;
             }
             QTabWidget#aboutTabs::pane {
                 border: 1px solid #1e293b;
@@ -227,6 +242,39 @@ class AboutDialog(QDialog):
             }
             QPushButton#primaryButton:pressed {
                 background: #5b4bc9;
+            }
+            QPushButton#secondaryButton {
+                background: #151f31;
+                color: #d9e2ef;
+                border: 1px solid #2b3a52;
+                border-radius: 8px;
+                padding: 8px 16px;
+                font-weight: 600;
+                font-size: 12px;
+            }
+            QPushButton#secondaryButton:hover {
+                background: #1c2940;
+                border-color: #647d9f;
+            }
+            QScrollBar:vertical {
+                background: #0b1220;
+                width: 8px;
+                margin: 0;
+                border-radius: 4px;
+            }
+            QScrollBar::handle:vertical {
+                background: #2a3a52;
+                border-radius: 4px;
+                min-height: 28px;
+            }
+            QScrollBar::handle:vertical:hover {
+                background: #4a5e7b;
+            }
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                height: 0;
+            }
+            QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+                background: transparent;
             }
         """)
 
