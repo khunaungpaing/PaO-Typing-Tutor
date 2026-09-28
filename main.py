@@ -87,6 +87,20 @@ def load_application_icon(app: QApplication) -> str | None:
     return None
 
 
+def setup_application_menu(window: MainWindow) -> None:
+    """Ensure standard Help menu with Check for Updates action is configured."""
+    menu_bar = window.menuBar()
+    help_menu = None
+    for action in menu_bar.actions():
+        if action.text().replace("&", "") == "Help":
+            help_menu = action.menu()
+            break
+    if help_menu is None:
+        help_menu = menu_bar.addMenu("&Help")
+        check_action = help_menu.addAction("Check for Updates…")
+        check_action.triggered.connect(lambda: window.check_for_updates(silent=False))
+
+
 def main() -> int:
     """Create and run the Qt application context loop."""
     # Initialize the macOS specific runtime fixes before application construction
@@ -113,6 +127,7 @@ def main() -> int:
     # Render Application Viewports
     window = MainWindow(lessons, font_family, str(keyboard_font), BASE_DIR / "assets")
     window.setWindowIcon(app.windowIcon())
+    setup_application_menu(window)
     window.show()
 
     # Process and display boot diagnostic alerts if validation errors occur

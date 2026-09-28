@@ -53,6 +53,10 @@ class AboutDialog(QDialog):
 
         # Footer button
         footer = QHBoxLayout()
+        check_update_btn = QPushButton("Check for Updates…")
+        check_update_btn.setObjectName("secondaryButton")
+        check_update_btn.clicked.connect(self._check_for_updates)
+        footer.addWidget(check_update_btn)
         footer.addStretch()
         close_btn = QPushButton("Close")
         close_btn.setObjectName("primaryButton")
@@ -62,6 +66,12 @@ class AboutDialog(QDialog):
         main_layout.addLayout(footer)
 
         self._apply_dialog_theme()
+
+    def _check_for_updates(self) -> None:
+        from ui.update_dialog import UpdateDialog
+
+        dialog = UpdateDialog(current_version=__version__, silent_mode=False, parent=self)
+        dialog.exec()
 
     def _create_about_tab(self, assets_dir: Path | None) -> QWidget:
         tab = QWidget()

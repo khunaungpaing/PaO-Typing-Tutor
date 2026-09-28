@@ -25,6 +25,7 @@ from core.localization import Localizer
 from core.metrics import MetricsCalculator
 from core.sound_manager import SoundManager
 from core.typing_engine import CharacterResult, TypingEngine
+from core.version import APP_NAME
 from gui.metrics_bar import MetricsBar
 from gui.about_dialog import AboutDialog
 from gui.content_dialogs import LessonEditorDialog, ManageLessonsDialog
@@ -100,6 +101,9 @@ class MainWindow(QMainWindow):
         if app is not None:
             app.focusChanged.connect(self._on_focus_changed)
 
+        # 3-second delayed background quiet check for updates
+        QTimer.singleShot(3000, lambda: self.check_for_updates(silent=True))
+
     def _on_focus_changed(self, _old: QWidget | None, new: QWidget | None) -> None:
         """Re-focus the typing input when focus drifts to another widget."""
         if (new is not None
@@ -109,7 +113,27 @@ class MainWindow(QMainWindow):
                 and self.input_edit.isEnabled()):
             QTimer.singleShot(0, self.input_edit.setFocus)
 
+    def _create_menus(self) -> None:
+        """Create standard application menu bar with Help and Update options."""
+        menu_bar = self.menuBar()
+        help_menu = menu_bar.addMenu("&Help")
+
+        check_update_action = help_menu.addAction("Check for Updates…")
+        check_update_action.triggered.connect(lambda: self.check_for_updates(silent=False))
+
+        about_action = help_menu.addAction(f"About {APP_NAME}")
+        about_action.triggered.connect(self._open_about_dialog)
+
+    def check_for_updates(self, silent: bool = False) -> None:
+        """Trigger update check dialog (interactively or silently in background)."""
+        from ui.update_dialog import UpdateDialog
+
+        self._update_dialog = UpdateDialog(silent_mode=silent, parent=self)
+        if not silent:
+            self._update_dialog.exec()
+
     def _build_ui(self) -> None:
+        self._create_menus()
         root = QWidget()
         root.setObjectName("centralRoot")
         layout = QVBoxLayout(root)
@@ -212,6 +236,37 @@ class MainWindow(QMainWindow):
         self.setStyleSheet(f"""
             * {{ font-family: '{self.font_family}'; color: #e6edf7; }}
             QMainWindow, #centralRoot {{ background: #090f1d; }}
+            QMenuBar {{
+                background: #090f1d;
+                color: #e6edf7;
+                border-bottom: 1px solid #1d2b42;
+                font-size: 13px;
+                padding: 2px 4px;
+            }}
+            QMenuBar::item {{
+                background: transparent;
+                padding: 4px 10px;
+                border-radius: 6px;
+            }}
+            QMenuBar::item:selected {{
+                background: #1c2940;
+            }}
+            QMenu {{
+                background: #111a2b;
+                color: #e6edf7;
+                border: 1px solid #1d2b42;
+                border-radius: 8px;
+                padding: 4px;
+                font-size: 13px;
+            }}
+            QMenu::item {{
+                padding: 6px 20px;
+                border-radius: 6px;
+            }}
+            QMenu::item:selected {{
+                background: #6d5ce7;
+                color: #ffffff;
+            }}
             #mainScroll {{ background: #090f1d; border: 0; }}
             QScrollBar:vertical {{ background: #090f1d; width: 9px; margin: 2px; }}
             QScrollBar::handle:vertical {{ background: #31425d; border-radius: 4px; min-height: 36px; }}

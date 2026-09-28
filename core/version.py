@@ -13,6 +13,7 @@ AUTHOR_EMAIL = "khunaungpang.it.tumlm@gmail.com"
 COPYRIGHT = "Copyright (c) 2026 Khun Aung Paing"
 LICENSE_NAME = "MIT License"
 WEBSITE = "https://github.com/khunaungpaing/PaO-Typing-Tutor"
+GITHUB_REPO = "khunaungpaing/PaO-Typing-Tutor"
 DESCRIPTION = (
     "A desktop typing tutor for the Pa-O language (Kham Dom Experimental keyboard) "
     "built with Python and PyQt6. Features virtual keyboard, finger guidance, "
