@@ -28,12 +28,6 @@ a = Analysis(
         ("LICENSE", "."),
     ],
     hiddenimports=[
-        "pynput.keyboard._darwin",
-        "pynput.keyboard._win32",
-        "pynput.keyboard._xorg",
-        "pynput.mouse._darwin",
-        "pynput.mouse._win32",
-        "pynput.mouse._xorg",
         "qtawesome",
         "qtawesome.iconic_font",
         "urllib.request",

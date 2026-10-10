@@ -97,8 +97,6 @@ macOS Gatekeeper automatically places quarantine flags on applications downloade
 2. **Right-click** (or `Control + click`) on **Pa-O Typing Tutor.app** and select **Open**.
 3. In the confirmation dialog, click **Open**. (You only need to do this once).
 
-> **Note on Permissions**: The optional physical keyboard listener uses `pynput` to display real-time physical key presses. On macOS, macOS will prompt you to allow **Input Monitoring** permission under *System Settings > Privacy & Security > Input Monitoring*. The tutor works inside its window even without this permission.
-
 ---
 
 ### Windows ("Windows protected your PC" / Microsoft Defender SmartScreen)
@@ -163,7 +161,6 @@ PaO-Typing-Tutor/
 │   ├── font_features.py     # Font styling configuration
 │   ├── key_mapping.py       # Key mapping algorithms and defaults
 │   ├── keyboard_layouts.py  # Layout discovery and parsing
-│   ├── keyboard_listener.py # Global physical keyboard hook (pynput)
 │   ├── lesson_loader.py     # Lesson catalog loading and validation
 │   ├── localization.py      # Multi-language string resolver
 │   ├── metrics.py           # WPM, CPM, and accuracy calculations

@@ -19,7 +19,6 @@ from core.content_store import (
 )
 from core.font_features import pao_font
 from core.key_mapping import mapped_character
-from core.keyboard_listener import PhysicalKeyboardListener
 from core.keyboard_layouts import activate_layout, discover_layouts
 from core.localization import Localizer
 from core.metrics import MetricsCalculator
@@ -74,9 +73,6 @@ class MainWindow(QMainWindow):
         self.settings = QSettings("Pa-O", "Typing Tutor")
         self.localizer.set_language(str(self.settings.value("language", "pao")))
         self.sound = SoundManager(assets_directory / "sounds")
-        self.physical_keyboard = PhysicalKeyboardListener(self)
-        self.physical_keyboard.key_pressed.connect(self._physical_key_pressed)
-        self.physical_keyboard.key_released.connect(self._physical_key_released)
         self.engine = TypingEngine()
         self.started_at: float | None = None
         self.finished = False
@@ -91,7 +87,6 @@ class MainWindow(QMainWindow):
         self.timer.setInterval(250)
         self.timer.timeout.connect(self._refresh_metrics)
         self._load_lesson(0)
-        self.physical_keyboard.start()
 
         # Always keep focus on the typing input. When any other widget in
         # the main window receives focus (buttons, combos, etc.), schedule
@@ -227,7 +222,7 @@ class MainWindow(QMainWindow):
         keyboard_layout.setContentsMargins(10, 8, 10, 6)
         self.keyboard = VirtualKeyboard(Path(self.keyboard_font_path), self.font_family)
         keyboard_layout.addWidget(self.keyboard)
-        layout.addWidget(keyboard_card, 1)
+        layout.addWidget(keyboard_card, 2)
         self.setCentralWidget(root)
         self._refresh_icons()
 
@@ -311,12 +306,12 @@ class MainWindow(QMainWindow):
             #keyboardCard {{ background: #0e1727; border: 1px solid #1d2b42; border-radius: 10px; }}
             #keyboardKey {{ background: #1b2940; color: #c8d3e2; border: 1px solid #2e405b;
                 border-radius: 8px; padding: 1px; font-family: '{self.keyboard.font_family}';
-                font-size: 16px; font-weight: 600; }}
+                font-weight: 600; }}
             #keyboardKey[target="true"] {{ background: #26224d; color: white; border: 3px solid #8978ff; }}
             #keyboardKey[targetShift="true"] {{ background: #25264c; border: 3px solid #4cc9f0; }}
             #keyboardKey[pressed="true"] {{ background: #dc8b1e; color: #0b1120; border: 2px solid #ffc45c; }}
             #modifierKey {{ background: #151f31; color: #8fa1ba; border: 1px solid #2b3a52;
-                border-radius: 8px; font-size: 10px; font-weight: 700; }}
+                border-radius: 8px; font-weight: 700; }}
             #modifierKey[active="true"] {{ background: #6d5ce7; color: white; border: 2px solid #a99cff; }}
             #resultDialog {{ background: #0f172a; }}
             #resultHero {{ background: #172554; border: 1px solid #3730a3; border-radius: 18px; }}
@@ -385,16 +380,6 @@ class MainWindow(QMainWindow):
                     self.input_edit.insert(character)
                     return True
         return super().eventFilter(watched, event)
-
-    def _physical_key_pressed(self, key: int, shifted: bool, character: str) -> None:
-        """Mirror pynput events visually; Qt owns text entry to avoid duplication."""
-        if self.isActiveWindow() and self.input_edit.hasFocus():
-            self.keyboard.set_shifted(shifted)
-            self.keyboard.set_pressed_key(key)
-
-    def _physical_key_released(self, key: int) -> None:
-        if self.isActiveWindow():
-            self.keyboard.set_pressed_key(None)
 
     def _load_lesson(self, index: int) -> None:
         if not 0 <= index < len(self.lessons):
@@ -718,15 +703,42 @@ class MainWindow(QMainWindow):
         next_lesson.setText(self.localizer.text(
             "result.course_complete" if not has_next else "result.next"))
         next_lesson.clicked.connect(lambda: dialog.done(3))
+
+        if has_next:
+            next_lesson.setDefault(True)
+            next_lesson.setAutoDefault(True)
+            practice_again.setAutoDefault(False)
+            next_lesson.setFocus()
+        else:
+            practice_again.setDefault(True)
+            practice_again.setAutoDefault(True)
+            next_lesson.setAutoDefault(False)
+            practice_again.setFocus()
+
         actions.addWidget(practice_again)
         actions.addStretch()
         actions.addWidget(next_lesson)
         body.addLayout(actions)
+
+        def _on_dialog_key(event: QKeyEvent) -> None:
+            if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
+                if practice_again.hasFocus():
+                    dialog.done(2)
+                elif has_next:
+                    dialog.done(3)
+                else:
+                    dialog.done(2)
+                event.accept()
+                return
+            QDialog.keyPressEvent(dialog, event)
+
+        dialog.keyPressEvent = _on_dialog_key  # type: ignore[assignment]
+
         result = dialog.exec()
-        if result == 2:
-            self._restart()
-        elif result == 3:
+        if result == 3 or (result == QDialog.DialogCode.Accepted and has_next):
             self._next_lesson()
+        elif result == 2 or result == QDialog.DialogCode.Accepted:
+            self._restart()
 
     def _describe_character(self, character: str) -> str:
         """Use a readable name for whitespace in error feedback."""
@@ -735,5 +747,4 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event: object) -> None:
         """Stop background timer before closing."""
         self.timer.stop()
-        self.physical_keyboard.stop()
         super().closeEvent(event)  # type: ignore[arg-type]

@@ -13,7 +13,7 @@ from PyQt6.QtWidgets import (
 
 from core.font_features import pao_font
 from core.key_mapping import PAO_KEY_MAP, key_for_target
-from gui.hand_panel import HandPositioningPanel
+
 
 
 KEY_ROWS: Final[list[list[int]]] = [
@@ -171,22 +171,24 @@ class VirtualKeyboardWidget(QWidget):
 
     def __init__(self, font_path: Path, fallback_family: str, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        self.setMinimumHeight(230)
-        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.setMinimumHeight(190)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self._shifted = False
         self._pressed_key: int | None = None
         self._target_key: int | None = None
         self._target_shifted = False
         self.keys: dict[int, GlowKeyButton] = {}
         self.shift_keys: list[QPushButton] = []
-        self.hand_overlay = HandPositioningPanel()
-        self._key_font = self._load_font(font_path, fallback_family)
+        self._font_family = self._load_font_family(font_path, fallback_family)
+        self._current_font_size = 15
+        self._key_font = pao_font(self._font_family, 15)
 
         grid = QGridLayout(self)
         grid.setContentsMargins(0, 0, 0, 0)
         grid.setHorizontalSpacing(4)
         grid.setVerticalSpacing(4)
         for row_index, row in enumerate(KEY_ROWS):
+            grid.setRowStretch(row_index, 1)
             offset = row_index if row_index < 4 else 4
             for column, key in enumerate(row):
                 button = GlowKeyButton()
@@ -194,9 +196,9 @@ class VirtualKeyboardWidget(QWidget):
                 button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
                 button.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
                 button.setFont(self._key_font)
-                button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-                button.setMinimumHeight(38)
-                button.setMaximumHeight(42)
+                button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+                button.setMinimumHeight(36)
+                button.setMaximumHeight(85)
                 span = 18 if key == Qt.Key.Key_Space.value else 2
                 grid.addWidget(button, row_index, offset + column * 2, 1, span)
                 self.keys[key] = button
@@ -205,27 +207,52 @@ class VirtualKeyboardWidget(QWidget):
             shift.setObjectName("modifierKey")
             shift.setFocusPolicy(Qt.FocusPolicy.NoFocus)
             shift.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
-            shift.setMinimumHeight(38)
-            shift.setMaximumHeight(42)
+            shift.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+            shift.setMinimumHeight(36)
+            shift.setMaximumHeight(85)
             grid.addWidget(shift, 4, column, 1, span)
             self.shift_keys.append(shift)
-        grid.addWidget(self.hand_overlay, 5, 0, 1, 26)
         self._refresh()
 
+    def resizeEvent(self, event) -> None:
+        super().resizeEvent(event)
+        self._update_font_sizes()
+
+    def _update_font_sizes(self) -> None:
+        if not self.keys or self.height() < 50:
+            return
+        row_height = max(34.0, (self.height() - (len(KEY_ROWS) - 1) * 4) / len(KEY_ROWS))
+        font_pt = int(max(15.0, min(26.0, 15.0 + (row_height - 36.0) * 0.28)))
+        if font_pt == self._current_font_size:
+            return
+        self._current_font_size = font_pt
+        key_font = pao_font(self._font_family, font_pt)
+        space_font = pao_font(self._font_family, max(12, int(font_pt * 0.72)))
+        shift_font = pao_font(self._font_family, max(10, int(font_pt * 0.58)))
+
+        for key, button in self.keys.items():
+            if key == Qt.Key.Key_Space.value:
+                button.setFont(space_font)
+            else:
+                button.setFont(key_font)
+
+        for shift in self.shift_keys:
+            shift.setFont(shift_font)
+
     @staticmethod
-    def _load_font(font_path: Path, fallback_family: str) -> QFont:
+    def _load_font_family(font_path: Path, fallback_family: str) -> str:
         family = fallback_family
         if font_path.is_file():
             font_id = QFontDatabase.addApplicationFont(str(font_path))
             families = QFontDatabase.applicationFontFamilies(font_id) if font_id >= 0 else []
             if families:
                 family = families[0]
-        return pao_font(family, 15)
+        return family
 
     @property
     def font_family(self) -> str:
         """Family loaded specifically for the Pa-O key caps."""
-        return self._key_font.family()
+        return self._font_family
 
     def set_shifted(self, shifted: bool) -> None:
         """Show normal or Shift Pa-O labels."""
@@ -275,15 +302,6 @@ class VirtualKeyboardWidget(QWidget):
         self._refresh_styles()
 
     def _refresh_styles(self) -> None:
-        if self._target_key is None:
-            hand = finger = shift_hand = None
-        elif self._target_key == Qt.Key.Key_Space.value:
-            hand, finger, shift_hand = "both", "Thumb", None
-        else:
-            hand = "left" if self._target_key in LEFT_KEYS else "right"
-            finger = FINGER_BY_KEY.get(self._target_key)
-            shift_hand = ("right" if hand == "left" else "left") if self._target_shifted else None
-        self.hand_overlay.set_target(hand, finger, shift_hand)
         shift_active = self._shifted or self._target_shifted
         for shift in self.shift_keys:
             shift.setProperty("active", shift_active)
