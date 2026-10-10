@@ -5,14 +5,14 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Final
 
-from PyQt6.QtCore import QEasingCurve, QPropertyAnimation, Qt, pyqtProperty
-from PyQt6.QtGui import QColor, QFont, QFontDatabase
+from PyQt6.QtCore import QEasingCurve, QPropertyAnimation, QRectF, Qt, pyqtProperty
+from PyQt6.QtGui import QColor, QFont, QFontDatabase, QPaintEvent, QPainter
 from PyQt6.QtWidgets import (
     QGraphicsDropShadowEffect, QGridLayout, QPushButton, QSizePolicy, QWidget,
 )
 
 from core.font_features import pao_font
-from core.key_mapping import PAO_KEY_MAP, key_for_target
+from core.key_mapping import PAO_KEY_MAP, PHYSICAL_LABELS, key_for_target
 
 
 
@@ -127,7 +127,7 @@ FINGER_BY_KEY[Qt.Key.Key_Space.value] = "Thumb"
 
 
 class GlowKeyButton(QPushButton):
-    """Keyboard key with an animated, soft target halo."""
+    """Keyboard key with an animated, soft target halo and dual-language labels."""
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -144,6 +144,16 @@ class GlowKeyButton(QPushButton):
         self._animation.setLoopCount(-1)
         self._animation.setKeyValueAt(0.5, 1.0)
         self._animation.setEndValue(0.0)
+
+        self.pao_text: str = ""
+        self.english_label: str = ""
+        self.is_spacebar: bool = False
+        self.pao_font_family: str = ""
+        self.pao_font_size: int = 15
+        self.eng_font_size: int = 9
+        self.is_target: bool = False
+        self.is_target_shift: bool = False
+        self.is_pressed: bool = False
 
     @pyqtProperty(float)
     def glow(self) -> float:
@@ -165,6 +175,61 @@ class GlowKeyButton(QPushButton):
             self._animation.stop()
             self._effect.setEnabled(False)
 
+    def paintEvent(self, event: QPaintEvent) -> None:
+        super().paintEvent(event)
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        painter.setRenderHint(QPainter.RenderHint.TextAntialiasing)
+
+        rect = self.rect()
+        w = float(rect.width())
+        h = float(rect.height())
+
+        if self.is_spacebar:
+            if self.is_pressed:
+                text_color = QColor("#0b1120")
+            elif self.is_target:
+                text_color = QColor("#ffffff")
+            else:
+                text_color = QColor("#c8d3e2")
+            painter.setPen(text_color)
+            painter.setFont(pao_font(self.pao_font_family, self.pao_font_size))
+            painter.drawText(rect, Qt.AlignmentFlag.AlignCenter, "Spacebar")
+            return
+
+        # 1. Physical English key label (top-left)
+        if self.english_label:
+            if self.is_pressed:
+                eng_color = QColor("#1e293b")
+            elif self.is_target_shift:
+                eng_color = QColor("#38bdf8")
+            elif self.is_target:
+                eng_color = QColor("#c4b5fd")
+            else:
+                eng_color = QColor("#798ca4")
+
+            painter.setPen(eng_color)
+            painter.setFont(QFont("Arial", self.eng_font_size, QFont.Weight.Bold))
+            pad_x = max(4.0, min(8.0, w * 0.08))
+            pad_y = max(3.0, min(6.0, h * 0.08))
+            eng_rect = QRectF(pad_x, pad_y, w - 2 * pad_x, h * 0.45)
+            painter.drawText(eng_rect, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop, self.english_label)
+
+        # 2. Main Pa-O character (center)
+        if self.pao_text:
+            if self.is_pressed:
+                pao_color = QColor("#0b1120")
+            elif self.is_target or self.is_target_shift:
+                pao_color = QColor("#ffffff")
+            else:
+                pao_color = QColor("#e6edf7")
+
+            painter.setPen(pao_color)
+            painter.setFont(pao_font(self.pao_font_family, self.pao_font_size))
+            offset_y = max(4.0, h * 0.12)
+            pao_rect = QRectF(0.0, offset_y, w, h - offset_y)
+            painter.drawText(pao_rect, Qt.AlignmentFlag.AlignCenter, self.pao_text)
+
 
 class VirtualKeyboardWidget(QWidget):
     """Keyboard whose labels and highlights follow the Pa-O bindings."""
@@ -181,6 +246,7 @@ class VirtualKeyboardWidget(QWidget):
         self.shift_keys: list[QPushButton] = []
         self._font_family = self._load_font_family(font_path, fallback_family)
         self._current_font_size = 15
+        self._current_eng_size = 9
         self._key_font = pao_font(self._font_family, 15)
 
         grid = QGridLayout(self)
@@ -192,6 +258,9 @@ class VirtualKeyboardWidget(QWidget):
             offset = row_index if row_index < 4 else 4
             for column, key in enumerate(row):
                 button = GlowKeyButton()
+                button.pao_font_family = self._font_family
+                button.pao_font_size = self._current_font_size
+                button.eng_font_size = self._current_eng_size
                 button.setObjectName("keyboardKey")
                 button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
                 button.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
@@ -223,18 +292,24 @@ class VirtualKeyboardWidget(QWidget):
             return
         row_height = max(34.0, (self.height() - (len(KEY_ROWS) - 1) * 4) / len(KEY_ROWS))
         font_pt = int(max(15.0, min(26.0, 15.0 + (row_height - 36.0) * 0.28)))
-        if font_pt == self._current_font_size:
+        eng_pt = int(max(8.0, min(12.0, 8.0 + (row_height - 36.0) * 0.10)))
+        if font_pt == self._current_font_size and self._current_eng_size == eng_pt:
             return
         self._current_font_size = font_pt
+        self._current_eng_size = eng_pt
         key_font = pao_font(self._font_family, font_pt)
         space_font = pao_font(self._font_family, max(12, int(font_pt * 0.72)))
         shift_font = pao_font(self._font_family, max(10, int(font_pt * 0.58)))
 
         for key, button in self.keys.items():
+            button.pao_font_family = self._font_family
+            button.pao_font_size = space_font.pointSize() if key == Qt.Key.Key_Space.value else font_pt
+            button.eng_font_size = eng_pt
             if key == Qt.Key.Key_Space.value:
                 button.setFont(space_font)
             else:
                 button.setFont(key_font)
+            button.update()
 
         for shift in self.shift_keys:
             shift.setFont(shift_font)
@@ -287,9 +362,13 @@ class VirtualKeyboardWidget(QWidget):
         state = "shift" if self._shifted else "normal"
         for key, button in self.keys.items():
             if key == Qt.Key.Key_Space.value:
-                button.setText("Spacebar")
+                button.is_spacebar = True
+                button.pao_text = ""
+                button.english_label = ""
+                button.setText("")
                 continue
 
+            button.english_label = PHYSICAL_LABELS.get(key, "")
             character = PAO_KEY_MAP.get(key, {}).get(state, "")
             visual = VISUAL_KEY_MAP.get(key, {}).get(state)
 
@@ -298,7 +377,8 @@ class VirtualKeyboardWidget(QWidget):
             else:
                 display_text = COMBINING_DISPLAY_MAP.get(character, character)
 
-            button.setText("U+200B" if display_text == "\u200b" else display_text)
+            button.pao_text = "U+200B" if display_text == "\u200b" else display_text
+            button.setText("")
         self._refresh_styles()
 
     def _refresh_styles(self) -> None:
@@ -309,11 +389,15 @@ class VirtualKeyboardWidget(QWidget):
             shift.style().polish(shift)
         for key, button in self.keys.items():
             button.set_guided(key == self._target_key)
-            button.setProperty("pressed", key == self._pressed_key)
-            button.setProperty("target", key == self._target_key)
-            button.setProperty("targetShift", key == self._target_key and self._target_shifted)
+            button.is_pressed = (key == self._pressed_key)
+            button.is_target = (key == self._target_key)
+            button.is_target_shift = (key == self._target_key and self._target_shifted)
+            button.setProperty("pressed", button.is_pressed)
+            button.setProperty("target", button.is_target)
+            button.setProperty("targetShift", button.is_target_shift)
             button.style().unpolish(button)
             button.style().polish(button)
+            button.update()
 
 
 # Backwards-compatible name for existing imports.
