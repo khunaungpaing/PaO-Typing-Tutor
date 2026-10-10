@@ -89,9 +89,5 @@ if is_mac:
             "NSHighResolutionCapable": "True",
             "NSRequiresAquaSystemAppearance": "False",
             "LSMinimumSystemVersion": "11.0",
-            "NSInputMonitoringUsageDescription": (
-                "Pa-O Typing Tutor uses input monitoring to detect physical keyboard keys "
-                "for real-time finger and key guidance."
-            ),
         },
     )

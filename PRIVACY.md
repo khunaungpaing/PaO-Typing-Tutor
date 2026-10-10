@@ -8,6 +8,7 @@
 - **No telemetry or analytics**: The application does not collect, log, track, or transmit any user activity, keystrokes, practice metrics, or personal data.
 - **Local offline execution**: The application operates completely offline. No network requests are made during typing practice.
 - **User lessons & progress**: Any custom lessons you create or typing statistics generated during your sessions are stored strictly on your local computer (`%LOCALAPPDATA%` on Windows, `~/Library/Application Support` on macOS) and never shared.
+- **Software Updates**: The optional update checker queries the public GitHub Releases API (`api.github.com`) solely to check if a newer release exists. No user data, personal info, or telemetry are transmitted.
 
 ### 2. Third-Party Services
 The application does not embed third-party advertising SDKs, tracking pixels, or external analytics services.
