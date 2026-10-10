@@ -111,7 +111,23 @@ jobs:
           body: |
             ## Pa-O Typing Tutor ${{ github.ref_name }}
 
-            A cross-platform desktop typing tutor for the Pa-O language (Kham Dom Experimental keyboard).
+            > **⚠️ IMPORTANT**: This release is specifically designed for the **Pa-O Kham Dom Experimental Version** (`ပအိုဝ်းခမ်းဒွမ် စမ်းသပ်ဗားရှင်း`).
+
+            A modern cross-platform desktop typing tutor for learning, practicing, and mastering the Pa-O language using the **Pa-O Kham Dom Experimental** keyboard layout.
+
+            ---
+
+            ### ✨ Features in this Release
+            - **Pa-O Kham Dom Experimental Layout**: Specially tailored keyboard mapping and typing rules built exclusively for the Kham Dom Experimental layout.
+            - **Native Pa-O Font Display**: Bundles `KhamThaton-Exp` (`KhamThaton-Exp-Regular`), rendering authentic Pa-O Kham Dom glyphs and complex ligatures natively by default.
+            - **Responsive Virtual Keyboard**: Flexible layout with real-time target key highlighting and Shift state synchronization that scales cleanly across small and widescreen displays.
+            - **28 Structured Lessons**: Built-in lesson catalog covering basic vowels, consonants, tone marks, vocabulary, and full practice sentences.
+            - **Custom Lesson Manager**: Create, edit, and organize personal practice materials, with easy import of custom lessons from UTF-8 JSON and CSV files.
+            - **Live Typing Performance Metrics**: Real-time Words Per Minute (WPM), Accuracy percentage, Character count, and session duration.
+            - **In-App Auto-Updates**: Automated update checks directly through GitHub Releases with one-click background download & installation.
+            - **Localized Interface**: Full user interface localization in **Pa'O** (ပအိုဝ်း), **Burmese** (မြန်မာ), and **English**.
+            - **Audio Feedback**: Pleasant auditory cues for keystrokes, errors, and lesson completion, with synthesized tone fallbacks.
+            - **100% Offline & Private**: Completely private desktop application with zero telemetry, tracking, or background permissions.
 
             ---
 
@@ -119,8 +135,8 @@ jobs:
 
             | Platform | File | Description |
             | :--- | :--- | :--- |
-            | **macOS** | `Pa-O-Typing-Tutor-${{ github.ref_name }}-macos.dmg` | Drag-and-drop installer for macOS 11+ |
-            | **Windows** | `Pa-O-Typing-Tutor-${{ github.ref_name }}-windows-setup.exe` | Clean setup wizard for Windows 10/11 |
+            | **macOS** | `Pa-O-Typing-Tutor-${{ github.ref_name }}-macos.dmg` | Drag-and-drop installer for macOS 11+ (Intel & Apple Silicon) |
+            | **Windows** | `Pa-O-Typing-Tutor-${{ github.ref_name }}-windows-setup.exe` | Clean setup wizard for Windows 10 & 11 (64-bit) |
 
             ---
 
