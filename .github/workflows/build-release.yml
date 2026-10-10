@@ -74,11 +74,13 @@ jobs:
         run: |
           powershell -ExecutionPolicy Bypass -File scripts/build_windows.ps1
 
-      - name: Upload Windows Installer artifact
+      - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-installer
-          path: dist/*-windows-setup.exe
+          path: |
+            dist/*-windows-setup.exe
+            dist/*-windows-portable.zip
           if-no-files-found: error
 
   create-release:
@@ -104,6 +106,7 @@ jobs:
           files: |
             artifacts/*.dmg
             artifacts/*-windows-setup.exe
+            artifacts/*-windows-portable.zip
             artifacts/SHA256SUMS.txt
           name: Pa-O Typing Tutor ${{ github.ref_name }}
           draft: false
@@ -136,7 +139,8 @@ jobs:
             | Platform | File | Description |
             | :--- | :--- | :--- |
             | **macOS** | `Pa-O-Typing-Tutor-${{ github.ref_name }}-macos.dmg` | Drag-and-drop installer for macOS 11+ (Intel & Apple Silicon) |
-            | **Windows** | `Pa-O-Typing-Tutor-${{ github.ref_name }}-windows-setup.exe` | Clean setup wizard for Windows 10 & 11 (64-bit) |
+            | **Windows (Setup)** | `Pa-O-Typing-Tutor-${{ github.ref_name }}-windows-setup.exe` | Clean setup wizard for Windows 10 & 11 (64-bit) |
+            | **Windows (Portable)** | `Pa-O-Typing-Tutor-${{ github.ref_name }}-windows-portable.zip` | Standalone portable ZIP package (no installation required) |
 
             ---
 
@@ -155,9 +159,14 @@ jobs:
 
             *Alternatively: Right-click (or Control-click) the app icon in Finder, choose **Open**, and click **Open** in the dialog.*
 
-            #### Windows ("Windows protected your PC" / SmartScreen)
-            Windows Defender SmartScreen flags freshly released executables without built-up reputation.
-            1. When the blue "Windows protected your PC" banner appears, click **More info**.
+            #### Windows 11 Smart App Control ("Smart App Control blocked an app that may be unsafe")
+            On Windows 11 (22H2+), **Smart App Control (SAC)** strictly blocks unsigned executable files and installers downloaded from the web (there is no "Run anyway" button in the SAC prompt):
+            - **Option A (Recommended)**: Open **Windows Security** > **App & browser control** > **Smart App Control settings** and switch Smart App Control to **Off** (or Evaluation). Then run the setup installer normally.
+            - **Option B**: Download the **Portable ZIP** package (`*-windows-portable.zip`), extract it to your preferred folder (e.g. `C:\Users\YourUser\Pa-O Typing Tutor`), and double-click `Pa-O Typing Tutor.exe` to run directly.
+
+            #### Windows Defender SmartScreen ("Windows protected your PC")
+            If the standard blue SmartScreen banner appears:
+            1. Click **More info**.
             2. Click **Run anyway**.
             3. The installer will proceed normally and install Pa-O Typing Tutor into your Programs folder.
 

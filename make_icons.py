@@ -84,26 +84,13 @@ def make_ico(src: Path, dst: Path) -> None:
         from PIL import Image
 
         img = Image.open(src).convert("RGBA")
-        # Build per-size images with high-quality LANCZOS resampling
-        layers = [img.resize((s, s), Image.LANCZOS) for s in ICO_SIZES]
-        # Pillow needs the image list passed via append_images and the size
-        # list as tuples. The first element is the base (smallest is safest).
-        layers[0].save(
+        ico_sizes = [(s, s) for s in ICO_SIZES]
+        img.save(
             dst,
             format="ICO",
-            sizes=[(s, s) for s in ICO_SIZES],
-            append_images=layers[1:],
+            sizes=ico_sizes,
         )
-        # Verify by re-reading frame count
-        check = Image.open(dst)
-        frames = [check.size]
-        while True:
-            try:
-                check.seek(check.tell() + 1)
-                frames.append(check.size)
-            except EOFError:
-                break
-        print(f"  created  {dst.relative_to(ROOT)} (Pillow) — frames: {sorted(set(frames))}")
+        print(f"  created  {dst.relative_to(ROOT)} (Pillow) — sizes: {ICO_SIZES}")
         return
     except ImportError:
         pass

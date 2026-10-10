@@ -31,6 +31,14 @@ if (-not (Test-Path $DistExe)) {
     Write-Error "PyInstaller build failed: $DistExe not found."
 }
 
+Write-Host "==> Creating Portable ZIP package..." -ForegroundColor Cyan
+$ZipPath = "dist\Pa-O-Typing-Tutor-v${Version}-windows-portable.zip"
+if (Test-Path $ZipPath) { Remove-Item -Force $ZipPath }
+Compress-Archive -Path "dist\$AppName\*" -DestinationPath $ZipPath -Force
+if (Test-Path $ZipPath) {
+    Write-Host " Portable archive created: $ZipPath" -ForegroundColor Green
+}
+
 Write-Host "==> Locating Inno Setup Compiler (ISCC.exe)..." -ForegroundColor Cyan
 $IsccCandidates = @(
     "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
